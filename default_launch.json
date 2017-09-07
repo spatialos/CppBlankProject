@@ -1,0 +1,50 @@
+{
+  "template": "small",
+  "world": {
+    "chunkEdgeLengthMeters": 50,
+    "snapshots": {
+      "snapshotWritePeriodSeconds": 0
+    },
+    "dimensions": {
+      "xMeters": 1500,
+      "zMeters": 1500
+    }
+  },
+  "workers": [
+    {
+      "worker_type": "External",
+      "permissions": [{
+        "entity_creation": {
+          "allow": false
+        },
+        "entity_deletion": {
+          "allow": false
+        },
+        "entity_query": {
+          "allow": true,
+          "components": []
+        }
+      }]
+    },
+    {
+      "worker_type": "Managed",
+      "permissions": [{
+        "entity_creation": {
+          "allow": false
+        },
+        "entity_deletion": {
+          "allow": false
+        },
+        "entity_query": {
+          "allow": true,
+          "components": []
+        }
+      }],
+      "load_balancing": {
+        "auto_hex_grid": {
+          "num_workers": 1
+         }
+      }
+    }
+  ]
+}

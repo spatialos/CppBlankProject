@@ -1,0 +1,88 @@
+{
+  "build": {
+    "tasks_filename": "build.json"
+  },
+  "bridge": {
+    "worker_attribute_set": {
+      "attributes": [
+        "example_attribute_of_managed_worker"
+      ]
+    },
+    "entity_interest": {
+      "range_entity_interest": {
+        "radius": 10
+      }
+    },
+    "component_delivery": {
+      "default": "RELIABLE_ORDERED",
+      "checkout_all_initially": true
+    }
+  },
+  "managed": {
+    "linux": {
+      "artifact_name": "Managed@Linux.zip",
+      "command": "./Managed",
+      "arguments": [
+        "receptionist",
+        "${IMPROBABLE_RECEPTIONIST_HOST}",
+        "${IMPROBABLE_RECEPTIONIST_PORT}",
+        "${IMPROBABLE_WORKER_ID}"
+      ]
+    },
+    "windows": {
+      "artifact_name": "Managed@Windows.zip",
+      "command": "./Managed.exe",
+      "arguments": [
+        "receptionist",
+        "${IMPROBABLE_RECEPTIONIST_HOST}",
+        "${IMPROBABLE_RECEPTIONIST_PORT}",
+        "${IMPROBABLE_WORKER_ID}"
+      ]
+    },
+    "macos": {
+      "artifact_name": "Managed@Mac.zip",
+      "command": "./Managed",
+      "arguments": [
+        "receptionist",
+        "${IMPROBABLE_RECEPTIONIST_HOST}",
+        "${IMPROBABLE_RECEPTIONIST_PORT}",
+        "${IMPROBABLE_WORKER_ID}"
+      ]
+    }
+  },
+  "external": {
+    "local": {
+      "run_type": "EXECUTABLE_ZIP",
+      "linux": {
+        "artifact_name": "Managed@Linux.zip",
+        "command": "./Managed",
+        "arguments": [
+          "receptionist",
+          "localhost",
+          "7777",
+          "CppClientLocal"
+        ]
+      },
+      "windows": {
+        "artifact_name": "Managed@Windows.zip",
+        "command": "./Managed.exe",
+        "arguments": [
+          "receptionist",
+          "localhost",
+          "7777",
+          "CppClientLocal"
+        ]
+      },
+      "macos": {
+        "artifact_name": "Managed@Mac.zip",
+        "command": "./Managed",
+        "arguments": [
+          "receptionist",
+          "localhost",
+          "7777",
+          "CppClientLocal"
+        ]
+      }
+    }
+  }
+}

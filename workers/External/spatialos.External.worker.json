@@ -1,0 +1,86 @@
+{
+  "build": {
+    "tasks_filename": "build.json"
+  },
+  "bridge": {
+    "worker_attribute_set": {
+      "attributes": [
+        "example_attribute_of_external_worker"
+      ]
+    },
+    "entity_interest": {
+      "range_entity_interest": {
+        "radius": 10
+      }
+    },
+    "component_delivery": {
+      "default": "RELIABLE_ORDERED",
+      "checkout_all_initially": true
+    }
+  },
+  "external": {
+    "local": {
+      "run_type": "EXECUTABLE_ZIP",
+      "linux": {
+        "artifact_name": "External@Linux.zip",
+        "command": "./External",
+        "arguments": [
+          "receptionist",
+          "localhost",
+          "7777",
+          "ExternalLocalLinux"
+        ]
+      },
+      "windows": {
+        "artifact_name": "External@Windows.zip",
+        "command": "./External.exe",
+        "arguments": [
+          "receptionist",
+          "localhost",
+          "7777",
+          "ExternalLocalWindows"
+        ]
+      },
+      "macos": {
+        "artifact_name": "External@Mac.zip",
+        "command": "./External",
+        "arguments": [
+          "receptionist",
+          "localhost",
+          "7777",
+          "ExternalLocalMac"
+        ]
+      }
+    },
+    "cloud": {
+      "run_type": "EXECUTABLE_ZIP",
+      "linux": {
+        "artifact_name": "External@Linux.zip",
+        "command": "./External",
+        "arguments": [
+          "locator",
+          "locator.improbable.io",
+          "${IMPROBABLE_PROJECT_NAME}"
+        ]
+      },
+      "windows": {
+        "artifact_name": "External@Windows.zip",
+        "command": "./External.exe",
+        "arguments": [
+          "locator",
+          "locator.improbable.io",
+          "${IMPROBABLE_PROJECT_NAME}"
+        ]
+      },
+      "macos": {
+        "artifact_name": "External@Mac.zip",
+        "command": "./External",
+        "arguments": [
+          "locator",
+          "locator.improbable.io",
+          "${IMPROBABLE_PROJECT_NAME}"
+        ]
+      }
+    }
+  }
+}

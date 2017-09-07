@@ -1,0 +1,6 @@
+# This worker is using a custom build.json
+!build.json
+!spatialos_worker_packages.json
+
+# CMake
+cmake_build/
