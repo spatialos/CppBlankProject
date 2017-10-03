@@ -2,26 +2,25 @@
 #include <improbable/standard_library.h>
 #include <iostream>
 
+// Use this to make a worker::ComponentRegistry. This worker doesn't use any components yet
+// For example use worker::Components<improbable::Position, improbable::Metadata> to track these common components
+using EmptyRegistry = worker::Components<>;
+
 // Constants and parameters
-namespace {
+const int ErrorExitStatus = 1;
+const std::string kLoggerName = "startup.cc";
+const std::uint32_t kGetOpListTimeoutInMilliseconds = 100;
 
-    const int ErrorExitStatus = 1;
-
-    const std::string kLoggerName = "startup.cc";
-
-    const std::uint32_t kGetOpListTimeoutInMilliseconds = 100;
-} // anonymous namespace
-
-worker::Connection ConnectWithReceptionist(const std::string hostname, const std::uint16_t port,
-    const std::string& worker_id, const worker::ConnectionParameters& connection_parameters) {
-
-    auto future = worker::Connection::ConnectAsync(hostname, port, worker_id, connection_parameters);
+worker::Connection ConnectWithReceptionist(const std::string hostname, 
+                                           const std::uint16_t port,
+                                           const std::string& worker_id, 
+                                           const worker::ConnectionParameters& connection_parameters) {
+    auto future = worker::Connection::ConnectAsync(EmptyRegistry{}, hostname, port, worker_id, connection_parameters);
     return future.Get();
 }
 
 // Entry point
 int main(int argc, char** argv) {
-
     auto print_usage = [&]() {
         std::cout << "Usage: Managed receptionist <hostname> <port> <worker_id>" << std::endl;
         std::cout << std::endl;
@@ -50,8 +49,8 @@ int main(int argc, char** argv) {
     connection.SendLogMessage(worker::LogLevel::kInfo, kLoggerName, "Connected successfully");
 
     // Register callbacks and run the worker main loop.
-    worker::Dispatcher dispatcher;
-    bool is_connected = true;
+    worker::Dispatcher dispatcher{EmptyRegistry{}};
+    bool is_connected = connection.IsConnected();
 
     dispatcher.OnDisconnect([&](const worker::DisconnectOp& op) {
         std::cerr << "[disconnect] " << op.Reason << std::endl;

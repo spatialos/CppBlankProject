@@ -7,7 +7,9 @@ SDK](https://docs.improbable.io/reference/latest/workers/cpp/introduction).
 
 ## About managed and external workers
 
-Have a look at the [Glossary entry for Workers](https://docs.improbable.io/reference/latest/getting-started/concepts/glossary#worker) for a complete discussion and examples.
+Have a look at the [Glossary entry for
+Workers](https://docs.improbable.io/reference/latest/getting-
+started/concepts/glossary#worker) for a complete discussion and examples.
 
 ## Quick start
 
@@ -27,7 +29,7 @@ spatial worker build --target=<platform>
 spatial local launch
 ```
 
-And you can connect a new instance of the external C++ worker:
+To connect a new instance of the external C++ worker:
 
 ```
 spatial local worker launch External local
@@ -35,10 +37,10 @@ spatial local worker launch External local
 
 ## What the project does
 
-It's a blank project so the short answer is - not much. The snapshot which
-comes with this project contains a single entity with an ACL which matches the
-`Managed` worker attributes. When you launch a deployment a single instance of
-the `Managed` worker will be started as configured in `default_launch.json`.
+It's a blank project so the short answer is - not much. The snapshot file in
+this project contains a single entity with an ACL which matches the `Managed`
+worker attributes. When you launch a deployment, a single instance of the
+`Managed` worker will be started as configured in `default_launch.json`.
 
 After connecting successfully both the `Managed` and `External` workers log a
 message to SpatialOS which should be displayed in the output of `spatial local
@@ -48,7 +50,7 @@ When SpatialOS disconnects a worker, a message is written to the console output
 of the worker and it exits with an error status.
 
 Instances of the `External` worker won't have any entities added to their view
-because they don't have authority over anything in the snapshot.
+because they don't have write access to anything in the snapshot.
 
 ## Project structure
 
@@ -72,9 +74,6 @@ This is how projects are structured in the directory:
 ```
 
 This enables you to keep the worker directories free of CMake files for schema and dependencies while not needing a CMake file at the root of the project.
-
-This project comes with a launch configuration `default_launch.json` which you
-should change to match your game world design parameters.
 
 The `schema` directory contains a sample empty component called `blank`. It is
 not used by the workers directly so feel free to delete it but it's there to
@@ -106,7 +105,8 @@ spatial cloud upload <AssemblyName>
 spatial cloud launch <AssemblyName> default_launch.json <deploymentname>
 ```
 
-See [`spatial cloud connect external`](https://docs.improbable.io/reference/latest/tools/spatial/spatial-cloud-connect-external)
+See [`spatial cloud connect external`](https://docs.improbable.io/reference/latest/tools/spatial/spatial-
+cloud-connect-external)
 if you want to connect to a cloud deployment. In
 addition, the `External` worker has a second external launch configuration
 called `cloud` which could be used to connect provided that you know the
@@ -130,3 +130,23 @@ If you have an existing project, to add a new C++ worker to it:
     from `Schema` and `WorkerSdk` also rename those.
   4. Add it to the `workers` definition in your SpatialOS launch configuration
     (e.g. `default_launch.json`)
+
+If you don't want to follow the steps manually, use
+[`worker_create.sh`](worker_create.sh) which will copy and rename the required
+files. Feel free to modify this script to suit your needs.
+
+## Release notes
+
+The following are versions of SpatialOS with the changes to this project
+listed.
+
+### 12.0.0
+
+- Use `worker::ComponentRegistry` where required.
+- Add [`worker_create.sh`](worker_create.sh) to make it easier to create C++
+  workers in other projects from these templates.
+- Set `is_connected` flag based on connection state.
+
+### 11.0.1
+
+Initial release.
