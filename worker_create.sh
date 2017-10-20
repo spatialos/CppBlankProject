@@ -11,6 +11,9 @@ DEST_PROJECT_PATH=$3
 mkdir -p $DEST_PROJECT_PATH/workers/$NEW_NAME
 cp -rT workers/$OLD_NAME $DEST_PROJECT_PATH/workers/$NEW_NAME
 
+# Rename the worker schema so it is based on the new worker name
+mv $DEST_PROJECT_PATH/workers/$NEW_NAME/spatialos.$OLD_NAME.worker.json $DEST_PROJECT_PATH/workers/$NEW_NAME/spatialos.$NEW_NAME.worker.json
+
 # Copy CMakeLists for worker SDK and schema / generated code
 mkdir -p $DEST_PROJECT_PATH/dependencies/
 cp dependencies/CMakeLists.txt $DEST_PROJECT_PATH/dependencies/
