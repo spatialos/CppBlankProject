@@ -2,12 +2,17 @@
 
 This is a SpatialOS project which can serve as a template for building
 SpatialOS workers using the C++ SDK. It uses CMake as the build system. If
-you're new to SpatialOS, have a look at [Introduction to the C++ worker
-SDK](https://docs.improbable.io/reference/latest/workers/cpp/introduction).
+you're new to SpatialOS, have a look at [Introduction to the C++ worker SDK](https://docs.improbable.io/reference/latest/workers/cpp/introduction).
 
 ## About managed and external workers
 
-Have a look at the [Glossary entry for Workers](https://docs.improbable.io/reference/latest/getting-started/concepts/glossary#worker) for a complete discussion and examples.
+Have a look at the [Glossary entry for
+Workers](https://docs.improbable.io/reference/latest/getting-
+started/concepts/glossary#worker) for a complete discussion and examples.
+
+## Dependencies
+
+This project requires [CMake](https://cmake.org/) to be installed. CMake is the build system used to build the project.
 
 ## Quick start
 
@@ -92,7 +97,7 @@ binary directories are set as if they were.
 
 ## Attaching a debugger
 
-If you use a Visual Studio generator with CMake, the generated solution contains several projects to match the build targets. You can start a worker from Visual Studio by setting the project matching the worker name as the startup project for the solution and navigating to `Properties > Configuration properties > Debugging` to set the command arguments. Using `receptionist localhost 7777 DebugWorker` as the command arguments for example will connect a new instance of the worker named `DebugWorker` via the receptionist to a local running deployment. You can do this for both worker types that come with this project. Make sure you are starting the project using a local debugger (e.g. Local Windows Debugger).
+If you use a Visual Studio generator with CMake, the generated solution contains several projects to match the build targets. You can start a worker from Visual Studio by setting the project matching the worker name as the startup project for the solution. It will try to connect to a local deployment by default. You can customize the connection parameters by navigating to `Properties > Configuration properties > Debugging` to set the command arguments. Using `receptionist localhost 7777 DebugWorker` as the command arguments for example will connect a new instance of the worker named `DebugWorker` via the receptionist to a local running deployment. You can do this for both worker types that come with this project. Make sure you are starting the project using a local debugger (e.g. Local Windows Debugger).
 
 ## Cloud deployment
 
@@ -103,7 +108,8 @@ spatial cloud upload <AssemblyName>
 spatial cloud launch <AssemblyName> default_launch.json <deploymentname>
 ```
 
-See [`spatial cloud connect external`](https://docs.improbable.io/reference/latest/tools/spatial/spatial-cloud-connect-external)
+See [`spatial cloud connect external`](https://docs.improbable.io/reference/latest/tools/spatial/spatial-
+cloud-connect-external)
 if you want to connect to a cloud deployment. In
 addition, the `External` worker has a second external launch configuration
 called `cloud` which could be used to connect provided that you know the
@@ -131,6 +137,12 @@ If you have an existing project, to add a new C++ worker to it:
 If you don't want to follow the steps manually, use
 [`worker_create.sh`](worker_create.sh) which will copy and rename the required
 files. Feel free to modify this script to suit your needs.
+
+## Windows release builds
+
+On Windows, this project uses the [/MDd](https://msdn.microsoft.com/en-us/library/2kzt1wy3.aspx) build of the 
+C++ worker SDK. To build against the release /MD build of the C++ worker SDK, follow the instructions for
+[obtaining the SDK](https://docs.improbable.io/reference/latest/workers/cpp/setting-up#obtaining-the-sdk).
 
 ## Release notes
 

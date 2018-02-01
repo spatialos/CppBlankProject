@@ -27,8 +27,16 @@ set(GENERATED_CODE_DIR "${APPLICATION_ROOT}/generated_code/cpp")
 
 # The worker binary.
 # Make sure you add all worker and generated sources to the executable
-add_executable(${PROJECT_NAME}
-               src/startup.cc)
+file(GLOB_RECURSE SOURCE_FILES
+    "src/*.cc"
+    "src/*.cpp"
+    "src/*.h"
+    "src/*.hpp"
+    )
+    
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+
+set(VS_STARTUP_PROJECT ${CMAKE_PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME} Schema WorkerSdk)
 target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE

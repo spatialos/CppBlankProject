@@ -4,15 +4,13 @@
 set(GENERATED_CODE_DIR "${APPLICATION_ROOT}/generated_code/cpp")
 
 # Schema generated code in library
-set(SCHEMA_FILES
-  blank.schema
+file(GLOB_RECURSE SCHEMA_FILES
+  "*.schema"
   )
-
-set(SCHEMA_SOURCE_FILES
-  "${GENERATED_CODE_DIR}/blank.cc"
-  "${GENERATED_CODE_DIR}/blank.h"
-  "${GENERATED_CODE_DIR}/improbable/standard_library.cc"
-  "${GENERATED_CODE_DIR}/improbable/standard_library.h"
+  
+file(GLOB_RECURSE SCHEMA_SOURCE_FILES
+  "${GENERATED_CODE_DIR}/*.cc"
+  "${GENERATED_CODE_DIR}/*.h"
   )
 
 source_group(schema "${CMAKE_CURRENT_SOURCE_DIR}/[^/]*")

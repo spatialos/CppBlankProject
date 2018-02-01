@@ -59,8 +59,7 @@
         "arguments": [
           "receptionist",
           "localhost",
-          "7777",
-          "CppClientLocal"
+          "7777"
         ]
       },
       "windows": {
@@ -69,8 +68,7 @@
         "arguments": [
           "receptionist",
           "localhost",
-          "7777",
-          "CppClientLocal"
+          "7777"
         ]
       },
       "macos": {
@@ -79,8 +77,7 @@
         "arguments": [
           "receptionist",
           "localhost",
-          "7777",
-          "CppClientLocal"
+          "7777"
         ]
       }
     }
