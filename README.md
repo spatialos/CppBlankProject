@@ -6,9 +6,7 @@ you're new to SpatialOS, have a look at [Introduction to the C++ worker SDK](htt
 
 ## About managed and external workers
 
-Have a look at the [Glossary entry for
-Workers](https://docs.improbable.io/reference/latest/getting-
-started/concepts/glossary#worker) for a complete discussion and examples.
+Have a look at the [Glossary entry for Workers](https://docs.improbable.io/reference/latest/getting-started/concepts/glossary#worker) for a complete discussion and examples.
 
 ## Dependencies
 
@@ -108,8 +106,7 @@ spatial cloud upload <AssemblyName>
 spatial cloud launch <AssemblyName> default_launch.json <deploymentname>
 ```
 
-See [`spatial cloud connect external`](https://docs.improbable.io/reference/latest/tools/spatial/spatial-
-cloud-connect-external)
+See [`spatial cloud connect external`](https://docs.improbable.io/reference/latest/tools/spatial/spatial-cloud-connect-external)
 if you want to connect to a cloud deployment. In
 addition, the `External` worker has a second external launch configuration
 called `cloud` which could be used to connect provided that you know the
