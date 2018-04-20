@@ -44,34 +44,10 @@
         {
           "name": "CMake build",
           "working_path": "cmake_build",
-          "command": "cmake",
+          "command": "bash",
           "arguments": [
-            "-DCMAKE_GENERATOR_PLATFORM=x64",
-            ".."
-          ],
-          "target": "windows"
-        },
-        {
-          "name": "CMake build",
-          "working_path": "cmake_build",
-          "command": "cmake",
-          "arguments": [
-            "-DCMAKE_C_FLAGS=-m64",
-            "-G", "Unix Makefiles",
-            ".."
-          ],
-          "target": "linux"
-        },
-        {
-          "name": "CMake build",
-          "working_path": "cmake_build",
-          "command": "cmake",
-          "arguments": [
-            "-DCMAKE_OSX_ARCHITECTURES=x86_64",
-            "-G", "Unix Makefiles",
-            ".."
-          ],
-          "target": "macos"
+            "../../../build.sh"
+          ]
         },
         {
           "name": "Zip worker",
