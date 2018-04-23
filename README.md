@@ -21,12 +21,10 @@ The build scripts for each project:
   3. Create a `cmake_build` directory in the worker directory
   4. Invoke `cmake` with arguments depending on the target platform
 
-To build and launch a local deployment execute the following commands. The
-target platform is one of `windows`, `linux` or `macos`. Set it based on your
-development environment:
+To build and launch a local deployment execute the following commands:
 
 ```
-spatial worker build --target=<platform>
+spatial worker build
 spatial local launch
 ```
 
