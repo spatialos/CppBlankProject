@@ -9,7 +9,13 @@ DEST_PROJECT_PATH=$3
 
 # Copy worker project to destination
 mkdir -p $DEST_PROJECT_PATH/workers/$NEW_NAME
-cp -rT workers/$OLD_NAME $DEST_PROJECT_PATH/workers/$NEW_NAME
+if [ `uname` == 'Darwin' ]; then
+    # non-GNU cp does not understand -T; achieve the equivalent effect by
+    # appending a slash to the source dir.
+    cp -r workers/$OLD_NAME/ $DEST_PROJECT_PATH/workers/$NEW_NAME
+else
+    cp -rT workers/$OLD_NAME $DEST_PROJECT_PATH/workers/$NEW_NAME
+fi
 
 # Copy CMakeLists for worker SDK and schema / generated code
 mkdir -p $DEST_PROJECT_PATH/dependencies/
