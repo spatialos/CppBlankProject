@@ -7,6 +7,19 @@ OLD_NAME=$1
 NEW_NAME=$2
 DEST_PROJECT_PATH=$3
 
+if [ `uname` == 'Darwin' ]; then
+    if [ -z `which gsed` ]; then
+        echo "Sorry, GNU sed must be on your PATH as gsed for this script to work.
+If you use homebrew try:
+    brew install gnu-sed
+"
+        exit 1
+    fi
+    SED=gsed
+else
+    SED=sed
+fi
+
 # Copy worker project to destination
 mkdir -p $DEST_PROJECT_PATH/workers/$NEW_NAME
 if [ `uname` == 'Darwin' ]; then
@@ -24,7 +37,7 @@ cp dependencies/CMakeLists.txt $DEST_PROJECT_PATH/dependencies/
 cp schema/CMakeLists.txt $DEST_PROJECT_PATH/schema
 
 # Remove blank component from schema CMakeLists.txt
-sed -i '/blank/d' $DEST_PROJECT_PATH/schema/CMakeLists.txt
+$SED -i '/blank/d' $DEST_PROJECT_PATH/schema/CMakeLists.txt
 
 # Ignore generated files from source control
 cat <<EOT >> $DEST_PROJECT_PATH/.gitignore
@@ -44,7 +57,7 @@ cd $DEST_PROJECT_PATH/workers/$NEW_NAME
 mv spatialos.$OLD_NAME.worker.json spatialos.$NEW_NAME.worker.json
 
 # Find and replace in files (use double quotes to expand variables)
-sed -i "s/$OLD_NAME/$NEW_NAME/g" spatialos.$NEW_NAME.worker.json
-sed -i "s/$OLD_NAME/$NEW_NAME/g" CMakeLists.txt
-sed -i "s/$OLD_NAME/$NEW_NAME/g" build.json
-sed -i "s/$OLD_NAME/$NEW_NAME/g" src/startup.cc
+$SED -i "s/$OLD_NAME/$NEW_NAME/g" spatialos.$NEW_NAME.worker.json
+$SED -i "s/$OLD_NAME/$NEW_NAME/g" CMakeLists.txt
+$SED -i "s/$OLD_NAME/$NEW_NAME/g" build.json
+$SED -i "s/$OLD_NAME/$NEW_NAME/g" src/startup.cc
