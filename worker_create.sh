@@ -9,7 +9,7 @@ DEST_PROJECT_PATH=$3
 
 # Copy worker project to destination
 mkdir -p $DEST_PROJECT_PATH/workers/$NEW_NAME
-cp -rT workers/$OLD_NAME $DEST_PROJECT_PATH/workers/$NEW_NAME
+cp -r workers/$OLD_NAME/* $DEST_PROJECT_PATH/workers/$NEW_NAME
 
 # Copy CMakeLists for worker SDK and schema / generated code
 mkdir -p $DEST_PROJECT_PATH/dependencies/
