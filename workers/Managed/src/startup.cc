@@ -2,7 +2,7 @@
 #include <improbable/standard_library.h>
 #include <iostream>
 #include <algorithm>
-#include <ctime>
+#include <chrono>
 
 // Use this to make a worker::ComponentRegistry.
 // For example use worker::Components<improbable::Position, improbable::Metadata> to track these common components
@@ -37,7 +37,8 @@ std::string get_random_characters(size_t count) {
 
 // Entry point
 int main(int argc, char** argv) {
-    srand(time(nullptr));
+    auto now = std::chrono::high_resolution_clock::now();
+    srand(std::chrono::time_point_cast<std::chrono::nanoseconds>(now).time_since_epoch().count());
 
     std::cout << "[local] Worker started " << std::endl;
 
