@@ -84,7 +84,7 @@ sources.
 You can see (and edit) the content of the snapshot in text format by running a command to convert it:
 
 ```
-spatial project history snapshot convert --input <path> --input-format binary --output <path> --output-format text
+spatial project history snapshot convert --input=<path> --input-format=binary --output=<path> --output-format=text
 ```
 
 ### The worker project
@@ -107,8 +107,8 @@ If you use a Visual Studio generator with CMake, the generated solution contains
 As usual set the `project_name` field in `spatialos.json` to match your SpatialOS project name. Then upload and launch:
 
 ```
-spatial cloud upload <AssemblyName>
-spatial cloud launch <AssemblyName> default_launch.json <deploymentname> --snapshot=<snapshotpath>
+spatial cloud upload <assembly-name>
+spatial cloud launch <assembly-name> default_launch.json <deployment-name> --snapshot=<snapshot-path>
 ```
 
 See [`spatial cloud connect external`](https://docs.improbable.io/reference/latest/shared/spatial-cli/spatial-cloud-connect-external)
