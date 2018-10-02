@@ -57,7 +57,7 @@ std::string get_random_characters(size_t count) {
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             "abcdefghijklmnopqrstuvwxyz";
         const auto max_index = sizeof(charset) - 1;
-        return charset[rand() % max_index];
+        return charset[std::rand() % max_index];
     };
     std::string str(count, 0);
     std::generate_n(str.begin(), count, randchar);
