@@ -136,10 +136,6 @@ If you have an existing project, to add a new C++ worker to it:
   4. Add it to the `workers` definition in your SpatialOS launch configuration
     (e.g. `default_launch.json`)
 
-If you don't want to follow the steps manually, use
-[`worker_create.sh`](worker_create.sh) which will copy and rename the required
-files. Feel free to modify this script to suit your needs.
-
 ## Windows release builds
 
 On Windows, this project uses the [/MDd](https://msdn.microsoft.com/en-us/library/2kzt1wy3.aspx) build of the
@@ -158,8 +154,6 @@ The only change in SpatialOS 13.0 is that SpatialOS no longer includes the Unity
 ### 12.0.0
 
 - Use `worker::ComponentRegistry` where required.
-- Add [`worker_create.sh`](worker_create.sh) to make it easier to create C++
-  workers in other projects from these templates.
 - Set `is_connected` flag based on connection state.
 
 ### 11.0.1
