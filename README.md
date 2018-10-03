@@ -2,11 +2,12 @@
 
 This is a SpatialOS project which can serve as a template for building
 SpatialOS workers using the C++ SDK. It uses CMake as the build system. If
-you're new to SpatialOS, have a look at [Introduction to the C++ worker SDK](https://docs.improbable.io/reference/latest/workers/cpp/introduction).
+you're new to SpatialOS, have a look at [Introduction to the C++ worker SDK](https://docs.improbable.io/reference/latest/cppsdk/introduction).
 
 ## About managed and external workers
 
-Have a look at the [Glossary entry for Workers](https://docs.improbable.io/reference/latest/getting-started/concepts/glossary#worker) for a complete discussion and examples.
+Have a look at the [Glossary entry for
+Workers](https://docs.improbable.io/reference/latest/shared/glossary#worker) for a complete discussion and examples.
 
 ## Dependencies
 
@@ -80,6 +81,12 @@ show how sources generated from the schema could be linked in the worker
 binary. See `schema/CMakeLists.txt` which creates a library with all generated
 sources.
 
+You can see (and edit) the content of the snapshot in text format by running a command to convert it:
+
+```
+spatial project history snapshot convert --input=<path> --input-format=binary --output=<path> --output-format=text
+```
+
 ### The worker project
 
 The following applies to both the `Managed` and `External` worker projects but examples will only be about `Managed`.
@@ -100,11 +107,11 @@ If you use a Visual Studio generator with CMake, the generated solution contains
 As usual set the `project_name` field in `spatialos.json` to match your SpatialOS project name. Then upload and launch:
 
 ```
-spatial cloud upload <AssemblyName>
-spatial cloud launch <AssemblyName> default_launch.json <deploymentname>
+spatial cloud upload <assembly-name>
+spatial cloud launch <assembly-name> default_launch.json <deployment-name> --snapshot=<snapshot-path>
 ```
 
-See [`spatial cloud connect external`](https://docs.improbable.io/reference/latest/tools/spatial/spatial-cloud-connect-external)
+See [`spatial cloud connect external`](https://docs.improbable.io/reference/latest/shared/spatial-cli/spatial-cloud-connect-external)
 if you want to connect to a cloud deployment. In
 addition, the `External` worker has a second external launch configuration
 called `cloud` which could be used to connect provided that you know the
@@ -129,26 +136,24 @@ If you have an existing project, to add a new C++ worker to it:
   4. Add it to the `workers` definition in your SpatialOS launch configuration
     (e.g. `default_launch.json`)
 
-If you don't want to follow the steps manually, use
-[`worker_create.sh`](worker_create.sh) which will copy and rename the required
-files. Feel free to modify this script to suit your needs.
-
 ## Windows release builds
 
-On Windows, this project uses the [/MDd](https://msdn.microsoft.com/en-us/library/2kzt1wy3.aspx) build of the 
+On Windows, this project uses the [/MDd](https://msdn.microsoft.com/en-us/library/2kzt1wy3.aspx) build of the
 C++ worker SDK. To build against the release /MD build of the C++ worker SDK, follow the instructions for
-[obtaining the SDK](https://docs.improbable.io/reference/latest/workers/cpp/setting-up#obtaining-the-sdk).
+[obtaining the SDK](https://docs.improbable.io/reference/latest/cppsdk/setting-up#obtaining-the-sdk).
 
 ## Release notes
 
 The following are versions of SpatialOS with the changes to this project
 listed.
 
+### 13.0.0
+
+The only change in SpatialOS 13.0 is that SpatialOS no longer includes the Unity and Unreal SDKs.
+
 ### 12.0.0
 
 - Use `worker::ComponentRegistry` where required.
-- Add [`worker_create.sh`](worker_create.sh) to make it easier to create C++
-  workers in other projects from these templates.
 - Set `is_connected` flag based on connection state.
 
 ### 11.0.1

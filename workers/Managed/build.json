@@ -46,7 +46,7 @@
           "working_path": "cmake_build",
           "command": "bash",
           "arguments": [
-            "../../../build.sh"
+            "../build.sh"
           ]
         },
         {

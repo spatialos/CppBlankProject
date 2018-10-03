@@ -8,7 +8,7 @@ build/
 spatial.log
 logs/
 
-# Worker packages and other dependencies
+# Worker packages and other dependencies (be careful not to ignore the whole dependencies folder)
 dependencies/worker_sdk
 
 # Schema generated sources
