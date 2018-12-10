@@ -4,7 +4,8 @@
 #include <improbable/worker.h>
 #include <improbable/standard_library.h>
 #include <iostream>
-#include "mockable_connection.h"
+#include "MockableConnection.h"
+#include "MockableDispatcher.h"
 
 // Use this to make a worker::ComponentRegistry.
 // For example use worker::Components<improbable::Position, improbable::Metadata> to track these common components
@@ -95,15 +96,16 @@ int main(int argc, char** argv) {
 
     // Register callbacks and run the worker main loop.
     worker::Dispatcher dispatcher{ ComponentRegistry{} };
+    worker::MockableDispatcher mockableDispatcher{ dispatcher };
     bool is_connected = mockableConnection.IsConnected();
 
-    dispatcher.OnDisconnect([&](const worker::DisconnectOp& op) {
+    mockableDispatcher.OnDisconnect([&](const worker::DisconnectOp& op) {
         std::cerr << "[disconnect] " << op.Reason << std::endl;
         is_connected = false;
     });
 
     // Print log messages received from SpatialOS
-    dispatcher.OnLogMessage([&](const worker::LogMessageOp& op) {
+    mockableDispatcher.OnLogMessage([&](const worker::LogMessageOp& op) {
         if (op.Level == worker::LogLevel::kFatal) {
             std::cerr << "Fatal error: " << op.Message << std::endl;
             std::terminate();
@@ -116,7 +118,7 @@ int main(int argc, char** argv) {
     }
 
     while (is_connected) {
-        dispatcher.Process(mockableConnection.GetOpList(kGetOpListTimeoutInMilliseconds).op_list);
+        mockableDispatcher.Process(mockableConnection.GetOpList(kGetOpListTimeoutInMilliseconds));
     }
 
     return ErrorExitStatus;

@@ -1,4 +1,4 @@
-#include "mockable_connection.h"
+#include "MockableConnection.h"
 
 worker::MockableConnection::MockableConnection(worker::Connection &connection) : connection{std::move(connection)} {}
 
