@@ -18,19 +18,19 @@ struct CombinedOpList {
     OpList op_list;
 };
 
-class MockableConnection {
+class MockableConnectionWrapper {
 public:
-    MockableConnection(Connection &connection);
+    MockableConnectionWrapper(Connection &connection);
 
     // Noncopyable, but movable.
-    MockableConnection(const MockableConnection &) = delete;
+    MockableConnectionWrapper(const MockableConnectionWrapper &) = delete;
 
-    MockableConnection(MockableConnection
+    MockableConnectionWrapper(MockableConnectionWrapper
     &&) = default;
 
-    MockableConnection &operator=(const MockableConnection &) = delete;
+    MockableConnectionWrapper &operator=(const MockableConnectionWrapper &) = delete;
 
-    MockableConnection &operator=(MockableConnection &&) = default;
+    MockableConnectionWrapper &operator=(MockableConnectionWrapper &&) = default;
 
     bool IsConnected() const;
 

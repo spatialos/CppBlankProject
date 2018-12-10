@@ -9,26 +9,26 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include "MockableConnection.h"
+#include "MockableConnectionWrapper.h"
 
 namespace worker {
 
-class MockableDispatcher {
+class MockableDispatcherWrapper {
 public:
     template<typename T>
     using Callback = std::function<void(const T &)>;
     using CallbackKey = std::uint64_t;
 
-    MockableDispatcher(Dispatcher &dispatcher);
+    MockableDispatcherWrapper(Dispatcher &dispatcher);
 
     // Not copyable or movable.
-    MockableDispatcher(const MockableDispatcher &) = delete;
+    MockableDispatcherWrapper(const MockableDispatcherWrapper &) = delete;
 
-    MockableDispatcher(MockableDispatcher &&) = delete;
+    MockableDispatcherWrapper(MockableDispatcherWrapper &&) = delete;
 
-    MockableDispatcher &operator=(const MockableDispatcher &) = delete;
+    MockableDispatcherWrapper &operator=(const MockableDispatcherWrapper &) = delete;
 
-    MockableDispatcher &operator=(MockableDispatcher &&) = delete;
+    MockableDispatcherWrapper &operator=(MockableDispatcherWrapper &&) = delete;
 
     CallbackKey OnDisconnect(const Callback<DisconnectOp> &callback);
 
@@ -55,9 +55,7 @@ public:
     CallbackKey OnEntityQueryResponse(const Callback<EntityQueryResponseOp> &callback);
 
     template<typename T>
-    CallbackKey OnAddComponent(const Callback<AddComponentOp < T>>
-
-    & callback);
+    CallbackKey OnAddComponent(const Callback<AddComponentOp < T>> & callback);
 
     template<typename T>
     CallbackKey OnRemoveComponent(const Callback<RemoveComponentOp> &callback);
