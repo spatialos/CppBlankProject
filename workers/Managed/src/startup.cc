@@ -4,6 +4,7 @@
 #include <improbable/worker.h>
 #include <improbable/standard_library.h>
 #include <iostream>
+#include "mockable_connection.h"
 
 // Use this to make a worker::ComponentRegistry.
 // For example use worker::Components<improbable::Position, improbable::Metadata> to track these common components
@@ -88,12 +89,13 @@ int main(int argc, char** argv) {
 
     // Connect with receptionist
     worker::Connection connection = ConnectWithReceptionist(arguments[1], atoi(arguments[2].c_str()), workerId, parameters);
+    worker::MockableConnection mockableConnection{connection};
 
-    connection.SendLogMessage(worker::LogLevel::kInfo, kLoggerName, "Connected successfully");
+    mockableConnection.SendLogMessage(worker::LogLevel::kInfo, kLoggerName, "Connected successfully");
 
     // Register callbacks and run the worker main loop.
     worker::Dispatcher dispatcher{ ComponentRegistry{} };
-    bool is_connected = connection.IsConnected();
+    bool is_connected = mockableConnection.IsConnected();
 
     dispatcher.OnDisconnect([&](const worker::DisconnectOp& op) {
         std::cerr << "[disconnect] " << op.Reason << std::endl;
@@ -114,7 +116,7 @@ int main(int argc, char** argv) {
     }
 
     while (is_connected) {
-        dispatcher.Process(connection.GetOpList(kGetOpListTimeoutInMilliseconds));
+        dispatcher.Process(mockableConnection.GetOpList(kGetOpListTimeoutInMilliseconds).op_list);
     }
 
     return ErrorExitStatus;
