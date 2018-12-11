@@ -24,7 +24,7 @@ public:
     using CallbackKey = std::uint64_t;
 
     MockDispatcher(const ComponentRegistry &registry) : registry{registry},
-    callbackMap{std::map<FakeOpCompleteType, List<void*>>{}}
+    callbackMap{std::map<FakeOpCompleteType, List<std::function<void(void*)>>>{}}
     {
     }
 
@@ -111,7 +111,11 @@ public:
                 FAKE_OP_TYPE_COMPONENT_UPDATE,
                 T::ComponentId
         };
-        callbackMap[fakeOpCompleteType].emplace_back((void*) callback);
+        auto wrappedCallback = [callback](void* data) {
+            callback(*static_cast<ComponentUpdateOp<T>*>(data));
+        };
+
+        callbackMap[fakeOpCompleteType].emplace_back(wrappedCallback);
         return CallbackKey{1};
     }
 
@@ -150,7 +154,7 @@ public:
 
 private:
     const ComponentRegistry &registry;
-    std::map<FakeOpCompleteType, List<void*>> callbackMap;
+    std::map<FakeOpCompleteType, List<std::function<void(void*)>>> callbackMap;
 };
 
 }

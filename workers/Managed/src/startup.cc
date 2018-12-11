@@ -126,6 +126,8 @@ int main(int argc, char** argv) {
 
     dispatcher.OnComponentUpdate<improbable::Position>([&](const worker::ComponentUpdateOp<improbable::Position>& op) {
         std::cout << "Received position update." << std::endl;
+        std::cout << "Entity ID is: " << op.EntityId << std::endl;
+        std::cout << "X coord is: " << op.Update.coords().data()->x() << std::endl;
     });
 
     if (is_connected) {
