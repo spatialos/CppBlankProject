@@ -29,9 +29,9 @@ Connection ConnectWithReceptionist(const std::string hostname,
                                            const std::string& worker_id,
                                            const worker::ConnectionParameters& connection_parameters) {
 #ifdef MOCK_CONNECTION
-    return worker::MockConnection{};
+    return Connection{};
 #else
-    auto future = worker::Connection::ConnectAsync(ComponentRegistry{}, hostname, port, worker_id, connection_parameters);
+    auto future = Connection::ConnectAsync(ComponentRegistry{}, hostname, port, worker_id, connection_parameters);
     return future.Get();
 #endif
 }
