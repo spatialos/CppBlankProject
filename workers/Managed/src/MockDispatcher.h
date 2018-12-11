@@ -12,6 +12,9 @@
 #include <unordered_map>
 #include "MockConnection.h"
 
+/* NOTE: We define the implementation in the header file to avoid the 'unresolved external symbol' errors
+ * we try to link the header and have a source file contain the implementation. */
+
 namespace worker {
 
 class MockDispatcher {
@@ -20,66 +23,134 @@ public:
     using Callback = std::function<void(const T &)>;
     using CallbackKey = std::uint64_t;
 
-    MockDispatcher(const ComponentRegistry& registry);
+    MockDispatcher(const ComponentRegistry &registry) : registry{registry},
+    callbackMap{std::map<FakeOpCompleteType, List<void*>>{}}
+    {
+    }
 
-    // Not copyable or movable.
-    MockDispatcher(const MockDispatcher &) = delete;
+    CallbackKey
+    OnDisconnect(const Callback<DisconnectOp> &callback) {
+        return CallbackKey{1};
+    }
 
-    MockDispatcher(MockDispatcher &&) = delete;
+    CallbackKey
+    OnFlagUpdate(const Callback<FlagUpdateOp> &callback) {
+        return CallbackKey{1};
+    }
 
-    MockDispatcher &operator=(const MockDispatcher &) = delete;
+    CallbackKey
+    OnLogMessage(const Callback<LogMessageOp> &callback) {
+        return CallbackKey{1};
+    }
 
-    MockDispatcher &operator=(MockDispatcher &&) = delete;
+    CallbackKey
+    OnMetrics(const Callback<MetricsOp> &callback) {
+        return CallbackKey{1};
+    }
 
-    CallbackKey OnDisconnect(const Callback<DisconnectOp> &callback);
+    CallbackKey OnCriticalSection(
+            const Callback<CriticalSectionOp> &callback) {
+        return CallbackKey{1};
+    }
 
-    CallbackKey OnFlagUpdate(const Callback<FlagUpdateOp> &callback);
+    CallbackKey
+    OnAddEntity(const Callback<AddEntityOp> &callback) {
+        return CallbackKey{1};
+    }
 
-    CallbackKey OnLogMessage(const Callback<LogMessageOp> &callback);
+    CallbackKey OnRemoveEntity(
+            const Callback<RemoveEntityOp> &callback) {
+        return CallbackKey{1};
+    }
 
-    CallbackKey OnMetrics(const Callback<MetricsOp> &callback);
+    CallbackKey OnReserveEntityIdResponse(
+            const Callback<ReserveEntityIdResponseOp> &callback) {
+        return CallbackKey{1};
+    }
 
-    CallbackKey OnCriticalSection(const Callback<CriticalSectionOp> &callback);
+    CallbackKey OnReserveEntityIdsResponse(
+            const Callback<ReserveEntityIdsResponseOp> &callback) {
+        return CallbackKey{1};
+    }
 
-    CallbackKey OnAddEntity(const Callback<AddEntityOp> &callback);
+    CallbackKey OnCreateEntityResponse(
+            const Callback<CreateEntityResponseOp> &callback) {
+        return CallbackKey{1};
+    }
 
-    CallbackKey OnRemoveEntity(const Callback<RemoveEntityOp> &callback);
+    CallbackKey OnDeleteEntityResponse(
+            const Callback<DeleteEntityResponseOp> &callback) {
+        return CallbackKey{1};
+    }
 
-    CallbackKey OnReserveEntityIdResponse(const Callback<ReserveEntityIdResponseOp> &callback);
-
-    CallbackKey OnReserveEntityIdsResponse(const Callback<ReserveEntityIdsResponseOp> &callback);
-
-    CallbackKey OnCreateEntityResponse(const Callback<CreateEntityResponseOp> &callback);
-
-    CallbackKey OnDeleteEntityResponse(const Callback<DeleteEntityResponseOp> &callback);
-
-    CallbackKey OnEntityQueryResponse(const Callback<EntityQueryResponseOp> &callback);
+    CallbackKey OnEntityQueryResponse(
+            const Callback<EntityQueryResponseOp> &callback) {
+        return CallbackKey{1};
+    }
 
     template<typename T>
-    CallbackKey OnAddComponent(const Callback<AddComponentOp <T>> &callback);
+    CallbackKey OnAddComponent(const Callback<AddComponentOp<T>> &callback) {
+        return CallbackKey{1};
+    }
 
     template<typename T>
-    CallbackKey OnRemoveComponent(const Callback<RemoveComponentOp> &callback);
+    CallbackKey OnRemoveComponent(
+            const Callback<RemoveComponentOp> &callback) {
+        return CallbackKey{1};
+    }
 
     template<typename T>
-    CallbackKey OnAuthorityChange(const Callback<AuthorityChangeOp> &callback);
+    CallbackKey OnAuthorityChange(
+            const Callback<AuthorityChangeOp> &callback) {
+        return CallbackKey{1};
+    }
 
     template<typename T>
-    CallbackKey OnComponentUpdate(const Callback<ComponentUpdateOp <T>> &callback);
+    CallbackKey OnComponentUpdate(const Callback<ComponentUpdateOp<T>> &callback) {
+        auto fakeOpCompleteType = FakeOpCompleteType{
+                FAKE_OP_TYPE_COMPONENT_UPDATE,
+                T::ComponentId
+        };
+        callbackMap[fakeOpCompleteType].emplace_back((void*) callback);
+        return CallbackKey{1};
+    }
 
     template<typename T>
-    CallbackKey OnCommandRequest(const Callback<CommandRequestOp <T>> &callback);
+    CallbackKey OnCommandRequest(
+            const Callback<CommandRequestOp<T>> &callback) {
+        return CallbackKey{1};
+    }
 
     template<typename T>
-    CallbackKey OnCommandResponse(const Callback<CommandResponseOp <T>> &callback);
+    CallbackKey OnCommandResponse(
+            const Callback<CommandResponseOp<T>> &callback) {
+        return CallbackKey{1};
+    }
 
-    void Remove(CallbackKey key);
+    void Remove(CallbackKey key) {
+    }
 
-    void Process(const worker::List<worker::FakeOp> &fake_op_list) const;
+    void Process(const List<FakeOp> &fake_op_list) const {
+        for (auto iterator = fake_op_list.begin(); iterator != fake_op_list.end(); ++iterator) {
+            FakeOp fake_op = *iterator;
+            FakeOpCompleteType fakeOpCompleteType = fake_op.completeType;
+            auto mapIter = callbackMap.find(fakeOpCompleteType);
+            if (mapIter != callbackMap.end())
+            {
+                auto callbackList = mapIter->second;
+                for (auto callbackIter = callbackList.begin(); callbackIter != callbackList.end(); ++callbackIter)
+                {
+                    auto callback = *callbackIter;
+                    (callback) (fake_op.data);
+                }
+            }
+        }
+    }
+
 
 private:
     const ComponentRegistry &registry;
-    std::map<worker::FakeOpCompleteType, worker::List<void*>> callbackMap;
+    std::map<FakeOpCompleteType, List<void*>> callbackMap;
 };
 
 }

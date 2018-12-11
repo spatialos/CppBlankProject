@@ -8,10 +8,6 @@
 #include "MockConnection.h"
 #include "MockDispatcher.h"
 
-/* TODO(nik): Delete this. */
-//#include "MockConnection.cpp"
-//#include "MockDispatcher.cpp"
-
 #define MOCK_CONNECTION
 #ifdef MOCK_CONNECTION
 using Connection = worker::MockConnection;
@@ -128,9 +124,9 @@ int main(int argc, char** argv) {
         std::cout << "[remote] " << op.Message << std::endl;
     });
 
-    //dispatcher.OnComponentUpdate<improbable::Position>([&](const worker::ComponentUpdateOp<improbable::Position>& op) {
-        //std::cout << "Received position update." << std::endl;
-    //});
+    dispatcher.OnComponentUpdate<improbable::Position>([&](const worker::ComponentUpdateOp<improbable::Position>& op) {
+        std::cout << "Received position update." << std::endl;
+    });
 
     if (is_connected) {
         std::cout << "[local] Connected successfully to SpatialOS, listening to ops... " << std::endl;
