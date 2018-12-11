@@ -9,26 +9,26 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include "MockableConnectionWrapper.h"
+#include "MockConnection.h"
 
 namespace worker {
 
-class MockableDispatcherWrapper {
+class MockDispatcher {
 public:
     template<typename T>
     using Callback = std::function<void(const T &)>;
     using CallbackKey = std::uint64_t;
 
-    MockableDispatcherWrapper(Dispatcher &dispatcher);
+    MockDispatcher(const ComponentRegistry& registry);
 
     // Not copyable or movable.
-    MockableDispatcherWrapper(const MockableDispatcherWrapper &) = delete;
+    MockDispatcher(const MockDispatcher &) = delete;
 
-    MockableDispatcherWrapper(MockableDispatcherWrapper &&) = delete;
+    MockDispatcher(MockDispatcher &&) = delete;
 
-    MockableDispatcherWrapper &operator=(const MockableDispatcherWrapper &) = delete;
+    MockDispatcher &operator=(const MockDispatcher &) = delete;
 
-    MockableDispatcherWrapper &operator=(MockableDispatcherWrapper &&) = delete;
+    MockDispatcher &operator=(MockDispatcher &&) = delete;
 
     CallbackKey OnDisconnect(const Callback<DisconnectOp> &callback);
 
@@ -80,10 +80,10 @@ public:
 
     void Remove(CallbackKey key);
 
-    void Process(const CombinedOpList &combined_op_list) const;
+    void Process(const FakeOpList &fake_op_list) const;
 
 private:
-    Dispatcher &dispatcher;
+    const ComponentRegistry &registry;
 };
 
 }

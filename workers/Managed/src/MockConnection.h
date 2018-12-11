@@ -1,5 +1,5 @@
-#ifndef CPP_CONNECTION_MOCK_MOCKABLE_CONNECTION_H
-#define CPP_CONNECTION_MOCK_MOCKABLE_CONNECTION_H
+#ifndef CPP_CONNECTION_MOCK_CONNECTION_H
+#define CPP_CONNECTION_MOCK_CONNECTION_H
 
 #include <improbable/collections.h>
 #include <improbable/defaults.h>
@@ -14,23 +14,20 @@
 
 namespace worker {
 
-struct CombinedOpList {
-    OpList op_list;
+struct FakeOpList {
 };
 
-class MockableConnectionWrapper {
+class MockConnection {
 public:
-    MockableConnectionWrapper(Connection &connection);
-
     // Noncopyable, but movable.
-    MockableConnectionWrapper(const MockableConnectionWrapper &) = delete;
+    MockConnection(const MockConnection &) = delete;
 
-    MockableConnectionWrapper(MockableConnectionWrapper
+    MockConnection(MockConnection
     &&) = default;
 
-    MockableConnectionWrapper &operator=(const MockableConnectionWrapper &) = delete;
+    MockConnection &operator=(const MockConnection &) = delete;
 
-    MockableConnectionWrapper &operator=(MockableConnectionWrapper &&) = default;
+    MockConnection &operator=(MockConnection &&) = default;
 
     bool IsConnected() const;
 
@@ -40,7 +37,7 @@ public:
 
     Option<std::string> GetWorkerFlag(const std::string &flag_name) const;
 
-    CombinedOpList GetOpList(std::uint32_t timeout_millis);
+    FakeOpList GetOpList(std::uint32_t timeout_millis);
 
     void SendLogMessage(LogLevel level, const std::string &logger_name, const std::string &message,
                         const Option<EntityId> &entity_id = {});
@@ -103,10 +100,7 @@ public:
                             const std::string &message);
 
     void SetProtocolLoggingEnabled(bool enabled);
-
-private:
-    Connection connection;
 };
 }
 
-#endif //CPP_CONNECTION_MOCK_MOCKABLE_CONNECTION_H
+#endif //CPP_CONNECTION_MOCK_CONNECTION_H

@@ -18,6 +18,8 @@ else()
   add_definitions(-Wall -Wextra -Werror -pedantic)
 endif()
 
+add_definitions(-DMOCK_CONNECTION)
+
 add_subdirectory(${WORKER_SDK_DIR}
   "${CMAKE_CURRENT_BINARY_DIR}/WorkerSdk") # WorkerSdk target created
 add_subdirectory(${SCHEMA_SOURCE_DIR}
