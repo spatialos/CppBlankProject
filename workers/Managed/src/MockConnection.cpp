@@ -1,4 +1,7 @@
 #include "MockConnection.h"
+
+worker::MockConnection::MockConnection() : fake_op_list{worker::List<worker::FakeOp>{}} {}
+
 bool worker::MockConnection::IsConnected() const {
     return true;
 }
@@ -15,8 +18,11 @@ worker::Option<std::string> worker::MockConnection::GetWorkerFlag(const std::str
     return worker::Option<std::string>("flag_value");
 }
 
-worker::FakeOpList worker::MockConnection::GetOpList(std::uint32_t timeout_millis) {
-    return FakeOpList{};
+worker::List<worker::FakeOp> worker::MockConnection::GetOpList(std::uint32_t timeout_millis) {
+    /* TODO(nik): Check that this actually copies the list. */
+    auto fake_op_list_copy =  fake_op_list;
+    fake_op_list.clear();
+    return fake_op_list_copy;
 }
 
 void worker::MockConnection::SendLogMessage(worker::LogLevel level, const std::string &logger_name,
@@ -72,6 +78,12 @@ void worker::MockConnection::SendAuthorityLossImminentAcknowledgement(worker::En
 
 template<typename T>
 void worker::MockConnection::SendComponentUpdate(worker::EntityId entity_id, const typename T::Update &update) {
+    auto &op = new ComponentUpdateOp<T>{entity_id, update};
+    FakeOp fakeOp {
+        FAKE_OP_TYPE_COMPONENT_UPDATE,
+        &op
+    };
+    fake_op_list.emplace_back();
 }
 
 template<typename T>

@@ -11,14 +11,15 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include "FakeOp.h"
 
 namespace worker {
 
-struct FakeOpList {
-};
-
 class MockConnection {
 public:
+
+    MockConnection();
+
     // Noncopyable, but movable.
     MockConnection(const MockConnection &) = delete;
 
@@ -37,7 +38,7 @@ public:
 
     Option<std::string> GetWorkerFlag(const std::string &flag_name) const;
 
-    FakeOpList GetOpList(std::uint32_t timeout_millis);
+    worker::List<worker::FakeOp> GetOpList(std::uint32_t timeout_millis);
 
     void SendLogMessage(LogLevel level, const std::string &logger_name, const std::string &message,
                         const Option<EntityId> &entity_id = {});
@@ -100,6 +101,8 @@ public:
                             const std::string &message);
 
     void SetProtocolLoggingEnabled(bool enabled);
+private:
+    List<FakeOp> fake_op_list;
 };
 }
 

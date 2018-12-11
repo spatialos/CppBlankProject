@@ -80,7 +80,7 @@ public:
 
     void Remove(CallbackKey key);
 
-    void Process(const FakeOpList &fake_op_list) const;
+    void Process(const worker::List<worker::FakeOp> &fake_op_list) const;
 
 private:
     const ComponentRegistry &registry;

@@ -101,5 +101,12 @@ worker::MockDispatcher::CallbackKey worker::MockDispatcher::OnCommandResponse(
 void worker::MockDispatcher::Remove(worker::MockDispatcher::CallbackKey key) {
 }
 
-void worker::MockDispatcher::Process(const worker::FakeOpList &fake_op_list) const {
+void worker::MockDispatcher::Process(const worker::List<worker::FakeOp> &fake_op_list) const {
+    for (auto iterator = fake_op_list.begin(); iterator != fake_op_list.end(); ++iterator) {
+        auto fake_op = *iterator;
+        switch (fake_op.type) {
+            case FAKE_OP_TYPE_COMPONENT_UPDATE:
+                return;
+        }
+    }
 }
