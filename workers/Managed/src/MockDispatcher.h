@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <functional>
+#include <map>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -55,7 +56,7 @@ public:
     CallbackKey OnEntityQueryResponse(const Callback<EntityQueryResponseOp> &callback);
 
     template<typename T>
-    CallbackKey OnAddComponent(const Callback<AddComponentOp < T>> & callback);
+    CallbackKey OnAddComponent(const Callback<AddComponentOp <T>> &callback);
 
     template<typename T>
     CallbackKey OnRemoveComponent(const Callback<RemoveComponentOp> &callback);
@@ -64,19 +65,13 @@ public:
     CallbackKey OnAuthorityChange(const Callback<AuthorityChangeOp> &callback);
 
     template<typename T>
-    CallbackKey OnComponentUpdate(const Callback<ComponentUpdateOp < T>>
-
-    & callback);
+    CallbackKey OnComponentUpdate(const Callback<ComponentUpdateOp <T>> &callback);
 
     template<typename T>
-    CallbackKey OnCommandRequest(const Callback<CommandRequestOp < T>>
-
-    & callback);
+    CallbackKey OnCommandRequest(const Callback<CommandRequestOp <T>> &callback);
 
     template<typename T>
-    CallbackKey OnCommandResponse(const Callback<CommandResponseOp < T>>
-
-    & callback);
+    CallbackKey OnCommandResponse(const Callback<CommandResponseOp <T>> &callback);
 
     void Remove(CallbackKey key);
 
@@ -84,6 +79,7 @@ public:
 
 private:
     const ComponentRegistry &registry;
+    std::map<worker::FakeOpCompleteType, worker::List<void*>> callbackMap;
 };
 
 }

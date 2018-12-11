@@ -1,6 +1,9 @@
 #include "MockDispatcher.h"
 
-worker::MockDispatcher::MockDispatcher(const worker::ComponentRegistry &registry) : registry{registry} {}
+worker::MockDispatcher::MockDispatcher(const worker::ComponentRegistry &registry) : registry{registry},
+                                                                                    callbackMap{std::map<FakeOpCompleteType, worker::List<void*>>{}}
+{
+}
 
 worker::MockDispatcher::CallbackKey
 worker::MockDispatcher::OnDisconnect(const worker::MockDispatcher::Callback<worker::DisconnectOp> &callback) {
@@ -83,6 +86,11 @@ worker::MockDispatcher::CallbackKey worker::MockDispatcher::OnAuthorityChange(
 template<typename T>
 worker::MockDispatcher::CallbackKey worker::MockDispatcher::OnComponentUpdate(
         const worker::MockDispatcher::Callback<worker::ComponentUpdateOp<T>> &callback) {
+    auto fakeOpCompleteType = worker::FakeOpCompleteType {
+        FAKE_OP_TYPE_COMPONENT_UPDATE,
+        T::id
+    };
+    callbackMap[fakeOpCompleteType].emplace((void*) callback);
     return worker::MockDispatcher::CallbackKey{1};
 }
 
@@ -103,10 +111,17 @@ void worker::MockDispatcher::Remove(worker::MockDispatcher::CallbackKey key) {
 
 void worker::MockDispatcher::Process(const worker::List<worker::FakeOp> &fake_op_list) const {
     for (auto iterator = fake_op_list.begin(); iterator != fake_op_list.end(); ++iterator) {
-        auto fake_op = *iterator;
-        switch (fake_op.type) {
-            case FAKE_OP_TYPE_COMPONENT_UPDATE:
-                return;
+        worker::FakeOp fake_op = *iterator;
+        worker::FakeOpCompleteType fakeOpCompleteType = fake_op.completeType;
+        auto mapIter = callbackMap.find(fakeOpCompleteType);
+        if (mapIter != callbackMap.end())
+        {
+            auto callbackList = mapIter->second;
+            for (auto callbackIter = callbackList.begin(); callbackIter != callbackList.end(); ++callbackIter)
+            {
+                auto callback = *callbackIter;
+                ((void (*)(void*)) callback)(fake_op.data);
+            }
         }
     }
 }

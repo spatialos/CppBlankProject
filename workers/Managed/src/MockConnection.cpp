@@ -69,21 +69,29 @@ void worker::MockConnection::SendComponentInterest(worker::EntityId entity_id,
 }
 
 void worker::MockConnection::SendAuthorityLossImminentAcknowledgement(worker::EntityId entity_id,
-                                                                          worker::ComponentId component_id) {
+                                                                      worker::ComponentId component_id) {
+
 }
 
 template<typename T>
 void worker::MockConnection::SendAuthorityLossImminentAcknowledgement(worker::EntityId entity_id) {
+
 }
 
 template<typename T>
 void worker::MockConnection::SendComponentUpdate(worker::EntityId entity_id, const typename T::Update &update) {
-    auto &op = new ComponentUpdateOp<T>{entity_id, update};
-    FakeOp fakeOp {
+    auto op = new ComponentUpdateOp<T>{entity_id, update};
+    FakeOpCompleteType type {
         FAKE_OP_TYPE_COMPONENT_UPDATE,
-        &op
+        T::ComponentId
     };
-    fake_op_list.emplace_back();
+
+    FakeOp fakeOp {
+        type,
+        op
+    };
+
+    fake_op_list.emplace_back(fakeOp);
 }
 
 template<typename T>

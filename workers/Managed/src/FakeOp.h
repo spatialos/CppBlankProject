@@ -23,8 +23,21 @@ typedef enum FakeOpType {
     FAKE_OP_TYPE_COMMAND_RESPONSE = 17,
 } FakeOpType;
 
-struct FakeOp {
+struct FakeOpCompleteType {
     FakeOpType type;
+    ComponentId componentId;
+
+    bool operator==(const FakeOpCompleteType &o) const {
+        return o.type == type && componentId == o.componentId;
+    }
+
+    bool operator<(const FakeOpCompleteType &o) const {
+        return type < o.type || (type == o.type && componentId < o.componentId);
+    }
+};
+
+struct FakeOp {
+    FakeOpCompleteType completeType;
     void* data;
 };
 
