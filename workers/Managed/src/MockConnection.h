@@ -56,36 +56,31 @@ public:
 
     RequestId<ReserveEntityIdsRequest>
     SendReserveEntityIdsRequest(std::uint32_t number_of_entity_ids,
-                                                        const Option<uint32_t> &timeout_millis) {
+            const Option<uint32_t> &timeout_millis) {
         return RequestId<ReserveEntityIdsRequest>(1);
     }
 
     RequestId<CreateEntityRequest>
-    SendCreateEntityRequest(const Entity &entity,
-                                                    const Option<EntityId> &entity_id,
-                                                    const Option<uint32_t> &timeout_millis) {
+    SendCreateEntityRequest(const Entity &entity, const Option<EntityId> &entity_id,
+            const Option<uint32_t> &timeout_millis) {
         return RequestId<CreateEntityRequest>(1);
     }
 
     RequestId<DeleteEntityRequest>
-    SendDeleteEntityRequest(EntityId entity_id,
-                                                    const Option<uint32_t> &timeout_millis) {
+    SendDeleteEntityRequest(EntityId entity_id, const Option<uint32_t> &timeout_millis) {
         return RequestId<DeleteEntityRequest>(1);
     }
 
     RequestId<EntityQueryRequest>
-    SendEntityQueryRequest(const query::EntityQuery &entity_query,
-                                                   const Option<uint32_t> &timeout_millis) {
+    SendEntityQueryRequest(const query::EntityQuery &entity_query, const Option<uint32_t> &timeout_millis) {
         return RequestId<EntityQueryRequest>(1);
     }
 
-    void SendComponentInterest(EntityId entity_id,
-                                                       const Map<ComponentId, InterestOverride> &interest_overrides) {
+    void SendComponentInterest(EntityId entity_id, const Map<ComponentId, InterestOverride> &interest_overrides) {
 
     }
 
-    void SendAuthorityLossImminentAcknowledgement(EntityId entity_id,
-                                                                          ComponentId component_id) {
+    void SendAuthorityLossImminentAcknowledgement(EntityId entity_id, ComponentId component_id) {
 
     }
 
@@ -116,31 +111,26 @@ public:
 
     template<typename T>
     RequestId<OutgoingCommandRequest<T>>
-    SendCommandRequest(EntityId entity_id, const typename T::Request &request,
-                                               const Option<uint32_t> &timeout_millis,
-                                               const CommandParameters &parameters) {
+    SendCommandRequest(EntityId entity_id, const typename T::Request &request, const Option<uint32_t> &timeout_millis,
+            const CommandParameters &parameters) {
     }
 
     template<typename T>
     RequestId<OutgoingCommandRequest<T>>
-    SendCommandRequest(EntityId entity_id, typename T::Request &&request,
-                                               const Option<uint32_t> &timeout_millis,
-                                               const CommandParameters &parameters) {
+    SendCommandRequest(EntityId entity_id, typename T::Request &&request, const Option<uint32_t> &timeout_millis,
+            const CommandParameters &parameters) {
     }
 
     template<typename T>
-    void SendCommandResponse(RequestId<IncomingCommandRequest<T>> request_id,
-                                                     const typename T::Response &response) {
+    void SendCommandResponse(RequestId<IncomingCommandRequest<T>> request_id, const typename T::Response &response) {
     }
 
     template<typename T>
-    void SendCommandResponse(RequestId<IncomingCommandRequest<T>> request_id,
-                                                     typename T::Response &&response) {
+    void SendCommandResponse(RequestId<IncomingCommandRequest<T>> request_id, typename T::Response &&response) {
     }
 
     template<typename T>
-    void SendCommandFailure(RequestId<IncomingCommandRequest<T>> request_id,
-                                                    const std::string &message) {
+    void SendCommandFailure(RequestId<IncomingCommandRequest<T>> request_id, const std::string &message) {
     }
 
     void SetProtocolLoggingEnabled(bool enabled) {
