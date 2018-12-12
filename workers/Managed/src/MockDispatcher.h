@@ -12,9 +12,6 @@
 #include <unordered_map>
 #include "MockConnection.h"
 
-/* NOTE: We define the implementation in the header file to avoid the 'unresolved external symbol' errors
- * we try to link the header and have a source file contain the implementation. */
-
 namespace worker {
 
 class MockDispatcher {
@@ -154,6 +151,12 @@ public:
 
 private:
     const ComponentRegistry &registry;
+
+    /* NOTE:
+     * We need a store of all callbacks in our callback map but the signature of the callback varies by the specific
+     * op it handles.
+     * To work around this, we instead keep a list of std::function<void(void*)> and wrap each user callback in function
+     * that takes the void* and statically casts it to the correct op type before calling it. */
     std::map<FakeOpCompleteType, List<std::function<void(void*)>>> callbackMap;
 };
 

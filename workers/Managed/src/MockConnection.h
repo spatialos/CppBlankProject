@@ -13,9 +13,6 @@
 #include <unordered_map>
 #include "FakeOp.h"
 
-/* NOTE: We define the implementation in the header file to avoid the 'unresolved external symbol' errors
- * we try to link the header and have a source file contain the implementation. */
-
 namespace worker {
 
 class MockConnection {
