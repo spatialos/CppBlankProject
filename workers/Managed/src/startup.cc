@@ -31,8 +31,10 @@ Connection ConnectWithReceptionist(const std::string hostname,
                                            const std::string& worker_id,
                                            const worker::ConnectionParameters& connection_parameters) {
 #ifdef MOCK_CONNECTION
+    std::cout << "Using mock connection" << std::endl;
     return Connection{};
 #else
+    std::cout << "Using real connection" << std::endl;
     auto future = Connection::ConnectAsync(ComponentRegistry{}, hostname, port, worker_id, connection_parameters);
     return future.Get();
 #endif

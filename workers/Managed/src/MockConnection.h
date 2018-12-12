@@ -100,8 +100,7 @@ public:
 
     template<typename T>
     void SendComponentUpdate(EntityId entity_id, const typename T::Update &update) {
-        /* TODO(nik): Make sure this memory is actually managed. */
-        auto op = new ComponentUpdateOp<T>{entity_id, update};
+        auto op = std::shared_ptr<void>(new ComponentUpdateOp<T>{entity_id, update});
         FakeOpCompleteType type{
                 FAKE_OP_TYPE_COMPONENT_UPDATE,
                 T::ComponentId
@@ -109,7 +108,7 @@ public:
 
         FakeOp fakeOp{
                 type,
-                op
+                std::move(op)
         };
 
         fake_op_list.emplace_back(fakeOp);

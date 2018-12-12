@@ -38,7 +38,17 @@ struct FakeOpCompleteType {
 
 struct FakeOp {
     FakeOpCompleteType completeType;
-    void* data;
+
+    /* NOTE:
+     * We need a void type pointer here so our struct can point to any op.
+     * A union of the different structs wouldn't work as some ops (e.g. ComponentUpdateOp<T>) are templated.
+     *
+     * The reason we use a shared_ptr rather than a unique_ptr is because they are easier to use with a void type.
+     * See: https://stackoverflow.com/a/39288979
+     * Unfortunately the custom deleter approach doesn't work for us here because the deleter is op specific
+     * and it forms part of the unique_ptr's template arguments, meaning we can't stick it on the struct.
+     * A shared_ptr removes the need for us to work around this and is far simpler. */
+    std::shared_ptr<void> data;
 };
 
 }

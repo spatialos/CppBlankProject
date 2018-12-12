@@ -136,7 +136,7 @@ public:
 
     void Process(const List<FakeOp> &fake_op_list) const {
         for (auto iterator = fake_op_list.begin(); iterator != fake_op_list.end(); ++iterator) {
-            FakeOp fake_op = *iterator;
+            const FakeOp &fake_op = *iterator;
             FakeOpCompleteType fakeOpCompleteType = fake_op.completeType;
             auto mapIter = callbackMap.find(fakeOpCompleteType);
             if (mapIter != callbackMap.end())
@@ -145,7 +145,7 @@ public:
                 for (auto callbackIter = callbackList.begin(); callbackIter != callbackList.end(); ++callbackIter)
                 {
                     auto callback = *callbackIter;
-                    (callback) (fake_op.data);
+                    (callback) (fake_op.data.get());
                 }
             }
         }
