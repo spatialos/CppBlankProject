@@ -134,10 +134,10 @@ public:
     void Remove(CallbackKey key) {
     }
 
-    void Process(const List<FakeOp> &fake_op_list) const {
-        for (auto iterator = fake_op_list.begin(); iterator != fake_op_list.end(); ++iterator) {
-            const FakeOp &fake_op = *iterator;
-            FakeOpCompleteType fakeOpCompleteType = fake_op.completeType;
+    void Process(const List<FakeOp> &fakeOpList) const {
+        for (auto iterator = fakeOpList.begin(); iterator != fakeOpList.end(); ++iterator) {
+            const FakeOp &fakeOp = *iterator;
+            FakeOpCompleteType fakeOpCompleteType = fakeOp.completeType;
             auto mapIter = callbackMap.find(fakeOpCompleteType);
             if (mapIter != callbackMap.end())
             {
@@ -145,7 +145,7 @@ public:
                 for (auto callbackIter = callbackList.begin(); callbackIter != callbackList.end(); ++callbackIter)
                 {
                     auto callback = *callbackIter;
-                    (callback) (fake_op.data.get());
+                    (callback) (fakeOp.data.get());
                 }
             }
         }

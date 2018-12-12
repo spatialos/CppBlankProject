@@ -20,7 +20,7 @@ namespace worker {
 
 class MockConnection {
 public:
-    MockConnection() : fake_op_list{List<FakeOp>{}} {}
+    MockConnection() : fakeOpList{List<FakeOp>{}} {}
 
     bool IsConnected() const {
         return true;
@@ -39,10 +39,9 @@ public:
     }
 
     List<FakeOp> GetOpList(std::uint32_t timeout_millis) {
-        /* TODO(nik): Check that this actually copies the list. */
-        auto fake_op_list_copy = fake_op_list;
-        fake_op_list.clear();
-        return fake_op_list_copy;
+        auto returnFakeOpList = fakeOpList;
+        fakeOpList.clear();
+        return returnFakeOpList;
     }
 
     void SendLogMessage(LogLevel level, const std::string& logger_name, const std::string& message,
@@ -102,16 +101,16 @@ public:
     void SendComponentUpdate(EntityId entity_id, const typename T::Update &update) {
         auto op = std::shared_ptr<void>(new ComponentUpdateOp<T>{entity_id, update});
         FakeOpCompleteType type{
-                FAKE_OP_TYPE_COMPONENT_UPDATE,
-                T::ComponentId
+            FAKE_OP_TYPE_COMPONENT_UPDATE,
+            T::ComponentId
         };
 
         FakeOp fakeOp{
-                type,
-                std::move(op)
+            type,
+            std::move(op)
         };
 
-        fake_op_list.emplace_back(fakeOp);
+        fakeOpList.emplace_back(fakeOp);
     }
 
     template<typename T>
@@ -151,7 +150,7 @@ public:
     }
 
 private:
-    List<FakeOp> fake_op_list;
+    List<FakeOp> fakeOpList;
 };
 
 }
