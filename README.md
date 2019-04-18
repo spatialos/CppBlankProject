@@ -11,11 +11,15 @@ Workers](https://docs.improbable.io/reference/latest/shared/glossary#worker) for
 
 ## Dependencies
 
-This project requires [CMake](https://cmake.org/) to be installed. CMake is the build system used to build the project.
+This project requires the following software to be installed:
+- [CMake](https://cmake.org/) 3.0+
+- _(Windows)_ Visual Studio 2015 or above.
+- _(macOS)_ Xcode
+- _(Linux)_ `gcc` / `clang` and `make` (for the "Unix Makefiles" CMake project generator)
 
 ## Quick start
 
-The build scripts for each project:
+The build scripts (`build.json`) for each project:
 
   1. Generate C++ code from schema
   2. Download the C++ worker SDK
@@ -29,7 +33,7 @@ spatial worker build
 spatial local launch
 ```
 
-To connect a new instance of the external C++ worker:
+To connect a new instance of the "External" worker type to a running local deployment (after `spatial local launch`):
 
 ```
 spatial local worker launch External local
@@ -104,7 +108,18 @@ If you use a Visual Studio generator with CMake, the generated solution contains
 
 ## Cloud deployment
 
-As usual set the `project_name` field in `spatialos.json` to match your SpatialOS project name. Then upload and launch:
+Our cloud deployment environment is based upon Ubuntu, so therefore if you're not using Linux, you'll
+have to either set up a cross-compile toolchain and build out a Linux binary (due to the nature of C++).
+More information can be found [here](https://docs.improbable.io/reference/13.7/cppsdk/building#building-for-a-cloud-deployment).
+
+If using Windows, options include (but are not limited to):
+- Install [Ubuntu](https://www.microsoft.com/en-gb/p/ubuntu/9nblggh4msv6) using the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10), then build a Linux worker from within that environment.
+- Install Ubuntu in a Virtual Machine with either [VirtualBox](https://www.virtualbox.org/wiki/Downloads) or [VMware Workstation Player](https://www.vmware.com/products/workstation-player/workstation-player-evaluation.html).
+- Set up a cross-compiler to be used from Windows, such as the one distributed by Unreal Engine: https://docs.unrealengine.com/en-us/Platforms/Linux/GettingStarted
+- Use the Visual Studio 2017 CMake Linux support: https://docs.microsoft.com/en-us/cpp/linux/cmake-linux-project?view=vs-2017
+
+Once this is done and you have successfully built a Linux assembly, set the `project_name` field in
+`spatialos.json` to match your SpatialOS project name. Then upload and launch:
 
 ```
 spatial cloud upload <assembly-name>

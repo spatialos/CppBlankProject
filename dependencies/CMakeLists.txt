@@ -3,25 +3,112 @@
 
 # This is defined in spatialos_worker_packages.json (usually in the directory of each project
 # that requires the SDK)
-set(CPP_WORKER_SDK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/worker_sdk/cpp")
+if(WIN32)
+  set(CPP_WORKER_SDK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/worker_sdk/win32")
+elseif(UNIX)
+  if(APPLE)
+    set(CPP_WORKER_SDK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/worker_sdk/macos")
+  else()
+    set(CPP_WORKER_SDK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/worker_sdk/linux")
+  endif()
+endif()
 
-# C++ API libraries
+# Depends on threading libraries.
 find_package(Threads)
-find_library(LIB_CORE_SDK CoreSdk "${CPP_WORKER_SDK_DIR}/lib" DEFAULT_PATH)
-find_library(LIB_WORKER_SDK WorkerSdk "${CPP_WORKER_SDK_DIR}/lib" NO_DEFAULT_PATH)
-find_library(LIB_PROTOBUF NAMES protobuf libprotobuf PATHS "${CPP_WORKER_SDK_DIR}/lib" NO_DEFAULT_PATH)
-find_library(LIB_RAKNET RakNetLibStatic "${CPP_WORKER_SDK_DIR}/lib" NO_DEFAULT_PATH)
-find_library(LIB_SSL ssl "${CPP_WORKER_SDK_DIR}/lib" NO_DEFAULT_PATH)
-find_library(LIB_ZLIB NAMES z zlibstatic PATHS "${CPP_WORKER_SDK_DIR}/lib" NO_DEFAULT_PATH)
-find_library(LIB_GPR NAMES gpr PATHS "${CPP_WORKER_SDK_DIR}/lib" NO_DEFAULT_PATH)
-find_library(LIB_GRPC NAMES grpc PATHS "${CPP_WORKER_SDK_DIR}/lib" NO_DEFAULT_PATH)
-find_library(LIB_GRPCXX NAMES grpc++ PATHS "${CPP_WORKER_SDK_DIR}/lib" NO_DEFAULT_PATH)
 
-# Worker SDK in library.
+# Debug libraries.
+find_library(LIB_CORE_SDK_DEBUG
+  NAMES CoreSdk
+  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+find_library(LIB_WORKER_SDK_DEBUG
+  NAMES WorkerSdk
+  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+find_library(LIB_PROTOBUF_DEBUG
+  NAMES protobuf libprotobuf
+  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+find_library(LIB_RAKNET_DEBUG
+  NAMES RakNetLibStatic
+  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+find_library(LIB_SSL_DEBUG
+  NAMES ssl
+  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+find_library(LIB_ZLIB_DEBUG
+  NAMES z zlibstatic
+  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+find_library(LIB_GPR_DEBUG
+  NAMES gpr
+  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+find_library(LIB_GRPC_DEBUG
+  NAMES grpc
+  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+find_library(LIB_GRPCXX_DEBUG
+  NAMES grpc++
+  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+
+# Release libraries.
+find_library(LIB_CORE_SDK_RELEASE
+  NAMES CoreSdk
+  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+find_library(LIB_WORKER_SDK_RELEASE
+  NAMES WorkerSdk
+  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+find_library(LIB_PROTOBUF_RELEASE
+  NAMES protobuf libprotobuf
+  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+find_library(LIB_RAKNET_RELEASE
+  NAMES RakNetLibStatic
+  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+find_library(LIB_SSL_RELEASE
+  NAMES ssl
+  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+find_library(LIB_ZLIB_RELEASE
+  NAMES z zlibstatic
+  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+find_library(LIB_GPR_RELEASE
+  NAMES gpr
+  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+find_library(LIB_GRPC_RELEASE
+  NAMES grpc
+  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+find_library(LIB_GRPCXX_RELEASE
+  NAMES grpc++
+  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  NO_DEFAULT_PATH)
+
+# Worker SDK library.
 add_library(WorkerSdk INTERFACE)
-target_include_directories(WorkerSdk SYSTEM INTERFACE "${CPP_WORKER_SDK_DIR}/include")
+if(WIN32)
+  target_include_directories(WorkerSdk SYSTEM INTERFACE "${CPP_WORKER_SDK_DIR}/debug/include")
+else()
+  target_include_directories(WorkerSdk SYSTEM INTERFACE "${CPP_WORKER_SDK_DIR}/include")
+endif()
 target_link_libraries(WorkerSdk INTERFACE
-  ${LIB_WORKER_SDK} ${LIB_CORE_SDK} ${CMAKE_THREAD_LIBS_INIT} ${LIB_PROTOBUF}
-  ${LIB_RAKNET} ${LIB_ZLIB} ${LIB_GRPCXX} ${LIB_GRPC} ${LIB_GPR} ${LIB_SSL}
+  debug ${LIB_WORKER_SDK_DEBUG} optimized ${LIB_WORKER_SDK_RELEASE}
+  debug ${LIB_CORE_SDK_DEBUG} optimized ${LIB_CORE_SDK_RELEASE}
+  debug ${LIB_PROTOBUF_DEBUG} optimized ${LIB_PROTOBUF_RELEASE}
+  debug ${LIB_RAKNET_DEBUG} optimized ${LIB_RAKNET_RELEASE}
+  debug ${LIB_ZLIB_DEBUG} optimized ${LIB_ZLIB_RELEASE}
+  debug ${LIB_GRPCXX_DEBUG} optimized ${LIB_GRPCXX_RELEASE}
+  debug ${LIB_GRPC_DEBUG} optimized ${LIB_GRPC_RELEASE}
+  debug ${LIB_GPR_DEBUG} optimized ${LIB_GPR_RELEASE}
+  debug ${LIB_SSL_DEBUG} optimized ${LIB_SSL_RELEASE}
   # Must be at end!
+  ${CMAKE_THREAD_LIBS_INIT}
   ${CMAKE_DL_LIBS})

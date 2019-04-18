@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e -u -x -o pipefail
+set -e -u -o pipefail
 
 if [[ "$(uname -s)" == "Linux" ]]; then
   cmake .. -DCMAKE_C_FLAGS=-m64 -G "Unix Makefiles"
