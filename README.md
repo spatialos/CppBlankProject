@@ -19,7 +19,7 @@ This project requires the following software to be installed:
 
 ## Quick start
 
-The build scripts (`build.json`) for each project:
+The build scripts (`build.json`) for each worker:
 
   1. Generate C++ code from schema
   2. Download the C++ worker SDK
@@ -102,6 +102,10 @@ generator you use. A worker project includes 3 subdirectories in its
 not true subdirectories of `workers/Managed` in the file structure but their
 binary directories are set as if they were.
 
+On Windows, both the release and debug builds of the Worker SDK are downloaded and set up correctly in
+the `CMakeLists.txt`. This means that both the `Release` and `Debug` configurations in the generated
+Visual Studio solution (`.sln`) should build and link correctly without any further changes.
+
 ## Attaching a debugger
 
 If you use a Visual Studio generator with CMake, the generated solution contains several projects to match the build targets. You can start a worker from Visual Studio by setting the project matching the worker name as the startup project for the solution. It will try to connect to a local deployment by default. You can customize the connection parameters by navigating to `Properties > Configuration properties > Debugging` to set the command arguments. Using `receptionist localhost 7777 DebugWorker` as the command arguments for example will connect a new instance of the worker named `DebugWorker` via the receptionist to a local running deployment. You can do this for both worker types that come with this project. Make sure you are starting the project using a local debugger (e.g. Local Windows Debugger).
@@ -150,27 +154,3 @@ If you have an existing project, to add a new C++ worker to it:
     from `Schema` and `WorkerSdk` also rename those.
   4. Add it to the `workers` definition in your SpatialOS launch configuration
     (e.g. `default_launch.json`)
-
-## Windows release builds
-
-On Windows, this project uses the [/MDd](https://msdn.microsoft.com/en-us/library/2kzt1wy3.aspx) build of the
-C++ worker SDK. To build against the release /MD build of the C++ worker SDK, follow the instructions for
-[obtaining the SDK](https://docs.improbable.io/reference/latest/cppsdk/setting-up#obtaining-the-sdk).
-
-## Release notes
-
-The following are versions of SpatialOS with the changes to this project
-listed.
-
-### 13.0.0
-
-The only change in SpatialOS 13.0 is that SpatialOS no longer includes the Unity and Unreal SDKs.
-
-### 12.0.0
-
-- Use `worker::ComponentRegistry` where required.
-- Set `is_connected` flag based on connection state.
-
-### 11.0.1
-
-Initial release.
