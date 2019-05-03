@@ -112,9 +112,9 @@ If you use a Visual Studio generator with CMake, the generated solution contains
 
 ## Cloud deployment
 
-Our cloud deployment environment is based upon Ubuntu, so therefore if you're not using Linux, you'll
-have to either set up a cross-compile toolchain and build out a Linux binary (due to the nature of C++).
-More information can be found [here](https://docs.improbable.io/reference/13.7/cppsdk/building#building-for-a-cloud-deployment).
+Our cloud deployment environment is based on Linux, so therefore if you're not using Linux, you'll
+have to set up a cross-compile toolchain and build out a Linux binary (due to the nature of C++).
+More information can be found [here](https://docs.improbable.io/reference/latest/cppsdk/building#building-for-a-cloud-deployment).
 
 If using Windows, options include (but are not limited to):
 - Install [Ubuntu](https://www.microsoft.com/en-gb/p/ubuntu/9nblggh4msv6) using the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10), then build a Linux worker from within that environment.
