@@ -33,7 +33,7 @@
           ]
         },
         {
-          "name": "CMake configure",
+          "name": "CMake build directory",
           "command": "cmake",
           "arguments": [
             "-E",
@@ -42,19 +42,20 @@
           ]
         },
         {
-          "name": "CMake build",
+          "name": "Project files from CMake",
           "working_path": "cmake_build",
           "command": "bash",
           "arguments": [
-            "../build.sh"
+            "../cmake_configure.sh"
           ]
         },
         {
-          "name": "Zip worker",
+          "name": "Worker zip",
           "working_path": "cmake_build",
           "command": "cmake",
           "arguments": [
             "--build", ".",
+            "--config", "Release",
             "--target", "ManagedZip"
           ]
         }
