@@ -1,41 +1,50 @@
 {
   "targets": [
     {
-      "path": "../../dependencies/worker_sdk/win32/debug",
+      "path": "../../dependencies/worker_sdk/headers",
       "type": "worker_sdk",
       "packages": [
         {
-          "name": "cpp-static-x86_64-msvc_mdd-win32",
+          "name": "cpp_headers"
+        }
+      ]
+    },
+    {
+      "path": "../../dependencies/worker_sdk/win32/debug/lib",
+      "type": "worker_sdk",
+      "packages": [
+        {
+          "name": "c-static-x86_64-vc140_mdd-win32",
           "platform": "windows"
         }
       ]
     },
     {
-      "path": "../../dependencies/worker_sdk/win32/release",
+      "path": "../../dependencies/worker_sdk/win32/release/lib",
       "type": "worker_sdk",
       "packages": [
         {
-          "name": "cpp-static-x86_64-msvc_md-win32",
+          "name": "c-static-x86_64-vc140_md-win32",
           "platform": "windows"
         }
       ]
     },
     {
-      "path": "../../dependencies/worker_sdk/macos",
+      "path": "../../dependencies/worker_sdk/macos/lib",
       "type": "worker_sdk",
       "packages": [
         {
-          "name": "cpp-static-x86_64-clang_libcpp-macos",
+          "name": "c-static-x86_64-clang-macos",
           "platform": "macos"
         }
       ]
     },
     {
-      "path": "../../dependencies/worker_sdk/linux",
+      "path": "../../dependencies/worker_sdk/linux/lib",
       "type": "worker_sdk",
       "packages": [
         {
-          "name": "cpp-static-x86_64-gcc_libstdcpp-linux"
+          "name": "c-static-x86_64-gcc510-linux"
         }
       ]
     }
