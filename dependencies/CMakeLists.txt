@@ -13,20 +13,14 @@ elseif(UNIX)
   endif()
 endif()
 
+set(CPP_WORKER_SDK_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/worker_sdk/headers/include")
+
 # Depends on threading libraries.
 find_package(Threads)
 
 # Debug libraries.
-find_library(LIB_CORE_SDK_DEBUG
-  NAMES CoreSdk
-  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
-  NO_DEFAULT_PATH)
-find_library(LIB_WORKER_SDK_DEBUG
-  NAMES WorkerSdk
-  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
-  NO_DEFAULT_PATH)
-find_library(LIB_PROTOBUF_DEBUG
-  NAMES protobuf libprotobuf
+find_library(LIB_IMPROBABLE_WORKER_DEBUG
+  NAMES improbable_worker
   PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
   NO_DEFAULT_PATH)
 find_library(LIB_RAKNET_DEBUG
@@ -41,30 +35,10 @@ find_library(LIB_ZLIB_DEBUG
   NAMES z zlibstatic
   PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
   NO_DEFAULT_PATH)
-find_library(LIB_GPR_DEBUG
-  NAMES gpr
-  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
-  NO_DEFAULT_PATH)
-find_library(LIB_GRPC_DEBUG
-  NAMES grpc
-  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
-  NO_DEFAULT_PATH)
-find_library(LIB_GRPCXX_DEBUG
-  NAMES grpc++
-  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
-  NO_DEFAULT_PATH)
 
 # Release libraries.
-find_library(LIB_CORE_SDK_RELEASE
-  NAMES CoreSdk
-  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
-  NO_DEFAULT_PATH)
-find_library(LIB_WORKER_SDK_RELEASE
-  NAMES WorkerSdk
-  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
-  NO_DEFAULT_PATH)
-find_library(LIB_PROTOBUF_RELEASE
-  NAMES protobuf libprotobuf
+find_library(LIB_IMPROBABLE_WORKER_RELEASE
+  NAMES improbable_worker
   PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
   NO_DEFAULT_PATH)
 find_library(LIB_RAKNET_RELEASE
@@ -79,29 +53,15 @@ find_library(LIB_ZLIB_RELEASE
   NAMES z zlibstatic
   PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
   NO_DEFAULT_PATH)
-find_library(LIB_GPR_RELEASE
-  NAMES gpr
-  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
-  NO_DEFAULT_PATH)
-find_library(LIB_GRPC_RELEASE
-  NAMES grpc
-  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
-  NO_DEFAULT_PATH)
-find_library(LIB_GRPCXX_RELEASE
-  NAMES grpc++
-  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
-  NO_DEFAULT_PATH)
 
 # Worker SDK library.
 add_library(WorkerSdk INTERFACE)
-if(WIN32)
-  target_include_directories(WorkerSdk SYSTEM INTERFACE "${CPP_WORKER_SDK_DIR}/debug/include")
-else()
-  target_include_directories(WorkerSdk SYSTEM INTERFACE "${CPP_WORKER_SDK_DIR}/include")
-endif()
+
+target_include_directories(WorkerSdk SYSTEM INTERFACE "${CPP_WORKER_SDK_INCLUDE_DIR}")
+
 target_link_libraries(WorkerSdk INTERFACE
   debug ${LIB_WORKER_SDK_DEBUG} optimized ${LIB_WORKER_SDK_RELEASE}
-  debug ${LIB_CORE_SDK_DEBUG} optimized ${LIB_CORE_SDK_RELEASE}
+  debug ${LIB_IMPROBABLE_WORKER_DEBUG} optimized ${LIB_IMPROBABLE_WORKER_RELEASE}
   debug ${LIB_PROTOBUF_DEBUG} optimized ${LIB_PROTOBUF_RELEASE}
   debug ${LIB_RAKNET_DEBUG} optimized ${LIB_RAKNET_RELEASE}
   debug ${LIB_ZLIB_DEBUG} optimized ${LIB_ZLIB_RELEASE}
