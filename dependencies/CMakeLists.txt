@@ -60,14 +60,9 @@ add_library(WorkerSdk INTERFACE)
 target_include_directories(WorkerSdk SYSTEM INTERFACE "${CPP_WORKER_SDK_INCLUDE_DIR}")
 
 target_link_libraries(WorkerSdk INTERFACE
-  debug ${LIB_WORKER_SDK_DEBUG} optimized ${LIB_WORKER_SDK_RELEASE}
   debug ${LIB_IMPROBABLE_WORKER_DEBUG} optimized ${LIB_IMPROBABLE_WORKER_RELEASE}
-  debug ${LIB_PROTOBUF_DEBUG} optimized ${LIB_PROTOBUF_RELEASE}
   debug ${LIB_RAKNET_DEBUG} optimized ${LIB_RAKNET_RELEASE}
   debug ${LIB_ZLIB_DEBUG} optimized ${LIB_ZLIB_RELEASE}
-  debug ${LIB_GRPCXX_DEBUG} optimized ${LIB_GRPCXX_RELEASE}
-  debug ${LIB_GRPC_DEBUG} optimized ${LIB_GRPC_RELEASE}
-  debug ${LIB_GPR_DEBUG} optimized ${LIB_GPR_RELEASE}
   debug ${LIB_SSL_DEBUG} optimized ${LIB_SSL_RELEASE}
   # Must be at end!
   ${CMAKE_THREAD_LIBS_INIT}
