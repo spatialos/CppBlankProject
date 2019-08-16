@@ -44,7 +44,7 @@
       "type": "worker_sdk",
       "packages": [
         {
-          "name": "c-static-x86_64-gcc510-linux"
+          "name": "c-static-x86_64-gcc510_pic-linux"
         }
       ]
     }

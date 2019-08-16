@@ -6,6 +6,8 @@
 project(External)
 cmake_minimum_required(VERSION 3.0)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 set(APPLICATION_ROOT "${PROJECT_SOURCE_DIR}/../..")
 set(SCHEMA_SOURCE_DIR "${APPLICATION_ROOT}/schema")
 set(WORKER_SDK_DIR "${APPLICATION_ROOT}/dependencies")
