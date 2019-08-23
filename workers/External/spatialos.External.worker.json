@@ -5,7 +5,7 @@
   "bridge": {
     "worker_attribute_set": {
       "attributes": [
-        "example_attribute_of_external_worker"
+        "client"
       ]
     },
     "entity_interest": {

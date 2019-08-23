@@ -1,31 +1,27 @@
 {
-  "template": "small",
+  "template": "w2_r0500_e5",
   "world": {
-    "chunkEdgeLengthMeters": 50,
+    "chunk_edge_length_meters": 50,
     "snapshots": {
-      "snapshotWritePeriodSeconds": 0
+      "snapshot_write_period_seconds": 0
     },
     "dimensions": {
-      "xMeters": 1500,
-      "zMeters": 1500
+      "x_meters": 1500,
+      "z_meters": 1500
     }
   },
-  "workers": [
-    {
-      "worker_type": "External",
-      "permissions": [{
-        "entity_creation": {
-          "allow": true
-        },
-        "entity_deletion": {
-          "allow": true
-        },
-        "entity_query": {
-          "allow": true,
-          "components": []
+  "load_balancing": {
+    "layer_configurations": [
+      {
+        "layer": "simulation",
+        "rectangle_grid": {
+          "cols": 1,
+          "rows": 1
         }
-      }]
-    },
+      }
+    ]
+  },
+  "workers": [
     {
       "worker_type": "Managed",
       "permissions": [{
@@ -37,14 +33,24 @@
         },
         "entity_query": {
           "allow": true,
-          "components": []
+          "components": ["*"]
         }
-      }],
-      "load_balancing": {
-        "auto_hex_grid": {
-          "num_workers": 1
-         }
-      }
+      }]
+    },
+    {
+      "worker_type": "External",
+      "permissions": [{
+        "entity_creation": {
+          "allow": false
+        },
+        "entity_deletion": {
+          "allow": false
+        },
+        "entity_query": {
+          "allow": true,
+          "components": ["*"]
+        }
+      }]
     }
   ]
 }
