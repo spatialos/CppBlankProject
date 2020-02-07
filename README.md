@@ -47,14 +47,15 @@ worker attributes. When you launch a deployment, a single instance of the
 `Managed` worker will be started as configured in `default_launch.json`.
 
 After connecting successfully both the `Managed` and `External` workers log a
-message to SpatialOS which should be displayed in the output of `spatial local
-launch` as it's running. Then they just spin in a loop processing the Ops list.
+message to SpatialOS, which should be displayed in the output of `spatial local
+launch` as it's running. Then they just spin in a loop processing the ops.
 
 When SpatialOS disconnects a worker, a message is written to the console output
 of the worker and it exits with an error status.
 
-Instances of the `External` worker won't have any entities added to their view
-because they don't have write access to anything in the snapshot.
+When an instance of the `External` worker connects, it creates an entity with
+the `Position` component authoritative on itself. The entity has a simple relative
+sphere QBI query configured, which causes the worker to check out all entities.
 
 ## Project structure
 
@@ -80,7 +81,7 @@ This is how projects are structured in the directory:
 This enables you to keep the worker directories free of CMake files for schema and dependencies while not needing a CMake file at the root of the project.
 
 The `schema` directory contains a sample empty component called `blank`. It is
-not used by the workers directly so feel free to delete it but it's there to
+not used by the workers directly, so feel free to delete it but it's there to
 show how sources generated from the schema could be linked in the worker
 binary. See `schema/CMakeLists.txt` which creates a library with all generated
 sources.
