@@ -14,7 +14,7 @@
       "type": "worker_sdk",
       "packages": [
         {
-          "name": "c-static-x86_64-vc140_mdd-win32",
+          "name": "c-static-x86_64-vc141_mdd-win32",
           "platform": "windows"
         }
       ]
@@ -24,7 +24,7 @@
       "type": "worker_sdk",
       "packages": [
         {
-          "name": "c-static-x86_64-vc140_md-win32",
+          "name": "c-static-x86_64-vc141_md-win32",
           "platform": "windows"
         }
       ]
