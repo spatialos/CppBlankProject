@@ -12,8 +12,8 @@ Workers](https://docs.improbable.io/reference/latest/shared/glossary#worker) for
 ## Dependencies
 
 This project requires the following software to be installed:
-- [CMake](https://cmake.org/) 3.0+
-- _(Windows)_ Visual Studio 2015 or above.
+- [CMake](https://cmake.org/) 3.7+
+- _(Windows)_ Visual Studio 2017 or above.
 - _(macOS)_ Xcode
 - _(Linux)_ `gcc` / `clang` and `make` (for the "Unix Makefiles" CMake project generator)
 
