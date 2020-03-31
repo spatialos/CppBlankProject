@@ -52,8 +52,3 @@ steps:
     command: "bash -c ci/build.sh"
     <<: *windows_agent
 
-  - wait:
-
-  - label: build-steps-passed
-    command: echo Build steps passed!
-    <<: *linux_agent
