@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+"${TOOLS_DIR}"/spatial --log_level=debug --oauth2_client_cli_token_directory="${AUTH_DIR}" "$@"

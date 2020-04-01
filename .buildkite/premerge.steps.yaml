@@ -1,0 +1,54 @@
+common: &common
+  timeout_in_minutes: 60
+  retry:
+    automatic:
+        # These are designed to trap and retry failures because agent lost connection.
+        # Agent exits with -1 in this case.
+      - exit_status: -1
+        limit: 3
+      - exit_status: 255
+        limit: 3
+      - exit_status: 128
+        limit: 3
+
+linux_agent: &linux_agent
+  agents:
+    - "agent_count=1"
+    - "capable_of_building=worker-sdk"
+    - "environment=production"
+    - "permission_set=builder"
+    - "platform=linux"
+    - "scaler_version=2"
+    - "machine_type=half"
+    - "queue=${CI_LINUX_BUILDER_QUEUE:-v4-20-03-23-110204-bk9814-9f960b76}"
+  <<: *common
+
+macos_agent: &macos_agent
+  agents:
+    - "queue=${CI_MACOS_BUILDER_QUEUE:-macos_worker-sdk_17b57b101ca8ff76}"
+    - "environment=production"
+  <<: *common
+
+windows_agent: &windows_agent
+  agents:
+    - "agent_count=1"
+    - "capable_of_building=worker-sdk"
+    - "environment=production"
+    - "machine_type=half"
+    - "permission_set=builder"
+    - "platform=windows"
+    - "scaler_version=2"
+    - "queue=${CI_WINDOWS_BUILDER_QUEUE:-v4-20-03-25-183029-bk9912-014014bb}"
+  <<: *common
+
+steps:
+  - label: "build-linux"
+    command: "ci/build.sh"
+    <<: *linux_agent
+  - label: "build-macos"
+    command: "ci/build.sh"
+    <<: *macos_agent
+  - label: "build-windows"
+    command: "bash -c ci/build.sh"
+    <<: *windows_agent
+
