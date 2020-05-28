@@ -24,11 +24,6 @@ elif [[ "$(uname -s)" == "Darwin" ]]; then
   TOOLBELT_PLATFORM="mac"
   SPATIAL_PLATFORM="macos"
   SPATIAL_BINARY="spatial"
-
-  imp-tool-bootstrap subscribe \
-    --use_gcs_oidc_auth=false \
-    --gcs_credentials_type=auto \
-    --tools=imp-tool
 else
   TOOLBELT_PLATFORM="win"
   SPATIAL_PLATFORM="windows"
