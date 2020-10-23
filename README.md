@@ -30,7 +30,13 @@ To build and launch a local deployment execute the following commands:
 
 ```
 spatial worker build
-spatial local launch
+spatial local launch --runtime_version=<runtime version>
+```
+
+You can get a list of supported runtime versions by running
+
+```
+spatial runtime list-supported-versions
 ```
 
 To connect a new instance of the "External" worker type to a running local deployment (after `spatial local launch`):
