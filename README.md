@@ -30,7 +30,7 @@ To build and launch a local deployment execute the following commands:
 
 ```
 spatial worker build
-spatial local launch
+spatial local launch --runtime_version=14.5.4
 ```
 
 To connect a new instance of the "External" worker type to a running local deployment (after `spatial local launch`):
@@ -127,7 +127,7 @@ Once this is done and you have successfully built a Linux assembly, set the `pro
 
 ```
 spatial cloud upload <assembly-name>
-spatial cloud launch <assembly-name> default_launch.json <deployment-name> --snapshot=<snapshot-path>
+spatial cloud launch <assembly-name> default_launch.json <deployment-name> --snapshot=<snapshot-path> --runtime_version=14.5.4
 ```
 
 See [`spatial cloud connect external`](https://docs.improbable.io/reference/latest/shared/spatial-cli/spatial-cloud-connect-external)
