@@ -13,3 +13,6 @@ dependencies/worker_sdk
 
 # Schema generated sources
 generated_code/
+
+.idea
+cmake-build-debug
