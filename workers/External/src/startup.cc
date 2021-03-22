@@ -20,10 +20,16 @@ worker::Connection ConnectWithLocator(const std::string hostname,
     const std::string deployment_id,
     const std::string login_token,
     const worker::ConnectionParameters& connection_parameters) {
+    worker::LogsinkParameters logsink_params;
+    logsink_params.Type = worker::LogsinkType::kStdout;
+    logsink_params.FilterParameters.CustomFilter = [](worker::LogCategory categories, worker::LogLevel level) -> bool {
+        return level >= worker::LogLevel::kWarn ||
+            (level >= worker::LogLevel::kInfo && categories & worker::LogCategory::kLogin);
+    };
     worker::LocatorParameters locator_parameters;
-    locator_parameters.ProjectName = project_name;
-    locator_parameters.CredentialsType = worker::LocatorCredentialsType::kLoginToken;
-    locator_parameters.LoginToken.Token = login_token;
+    locator_parameters.Logsinks.emplace_back(logsink_params);
+    locator_parameters.PlayerIdentity.LoginToken = login_token;
+    locator_parameters.UseInsecureConnection = true;
 
     worker::Locator locator{ hostname, locator_parameters };
 
@@ -37,7 +43,7 @@ worker::Connection ConnectWithLocator(const std::string hostname,
         return true;
     };
 
-    auto future = locator.ConnectAsync(EmptyRegistry{}, deployment_id, connection_parameters, queue_status_callback);
+    auto future = locator.ConnectAsync(EmptyRegistry{}, connection_parameters);
     return future.Get();
 }
 
@@ -90,6 +96,15 @@ int main(int argc, char** argv) {
     parameters.Network.ConnectionType = worker::NetworkConnectionType::kTcp;
     parameters.Network.UseExternalIp = true;
 
+    worker::LogsinkParameters logsink_params;
+    logsink_params.Type = worker::LogsinkType::kStdout;
+    logsink_params.FilterParameters.CustomFilter = [](worker::LogCategory categories, worker::LogLevel level) -> bool {
+        return level >= worker::LogLevel::kWarn ||
+            (level >= worker::LogLevel::kInfo && categories & worker::LogCategory::kLogin);
+    };
+    parameters.Logsinks.emplace_back(logsink_params);
+    parameters.EnableLoggingAtStartup = true;
+
     std::vector<std::string> arguments;
 
     // if no arguments are supplied, use the defaults for a local deployment
@@ -121,20 +136,17 @@ int main(int argc, char** argv) {
 
     // Register callbacks and run the worker main loop.
     worker::Dispatcher dispatcher{ EmptyRegistry{} };
-    bool is_connected = connection.IsConnected();
+    
+    if (connection.GetConnectionStatusCode() != worker::ConnectionStatusCode::kSuccess) {
+        std::cerr << "Failed to connect to the receptionist." << std::endl;
+        std::cerr << "Reason: " << connection.GetConnectionStatusDetailString() << std::endl;
+        return 1;
+    }
+    bool is_connected = true;
 
     dispatcher.OnDisconnect([&](const worker::DisconnectOp& op) {
         std::cerr << "[disconnect] " << op.Reason << std::endl;
         is_connected = false;
-    });
-
-    // Print messages received from SpatialOS
-    dispatcher.OnLogMessage([&](const worker::LogMessageOp& op) {
-        if (op.Level == worker::LogLevel::kFatal) {
-            std::cerr << "Fatal error: " << op.Message << std::endl;
-            std::terminate();
-        }
-        std::cout << "Connection: " << op.Message << std::endl;
     });
 
     while (is_connected) {
