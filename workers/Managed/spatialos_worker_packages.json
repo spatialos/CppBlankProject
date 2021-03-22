@@ -10,17 +10,7 @@
       ]
     },
     {
-      "path": "../../dependencies/worker_sdk/win32/debug/lib",
-      "type": "worker_sdk",
-      "packages": [
-        {
-          "name": "c-static-x86_64-vc141_mdd-win32",
-          "platform": "windows"
-        }
-      ]
-    },
-    {
-      "path": "../../dependencies/worker_sdk/win32/release/lib",
+      "path": "../../dependencies/worker_sdk/win32/lib",
       "type": "worker_sdk",
       "packages": [
         {
@@ -44,7 +34,7 @@
       "type": "worker_sdk",
       "packages": [
         {
-          "name": "c-static-x86_64-gcc510_pic-linux"
+          "name": "c-static-x86_64-clang1000_pic-linux"
         }
       ]
     }
