@@ -74,6 +74,15 @@ int main(int argc, char** argv) {
     parameters.Network.ConnectionType = worker::NetworkConnectionType::kTcp;
     parameters.Network.UseExternalIp = false;
 
+    worker::LogsinkParameters logsink_params;
+    logsink_params.Type = worker::LogsinkType::kStdout;
+    logsink_params.FilterParameters.CustomFilter = [](worker::LogCategory categories, worker::LogLevel level) -> bool {
+        return level >= worker::LogLevel::kWarn ||
+            (level >= worker::LogLevel::kInfo && categories & worker::LogCategory::kLogin);
+    };
+    parameters.Logsinks.emplace_back(logsink_params);
+    parameters.EnableLoggingAtStartup = true;
+
     std::string workerId;
 
     // When running as an external worker using 'spatial local worker launch'
