@@ -10,7 +10,7 @@
       ]
     },
     {
-      "path": "../../dependencies/worker_sdk/win32/release/lib",
+      "path": "../../dependencies/worker_sdk/win32/lib",
       "type": "worker_sdk",
       "packages": [
         {
