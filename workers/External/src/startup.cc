@@ -93,7 +93,8 @@ int main(int argc, char** argv) {
 
     worker::ConnectionParameters parameters;
     parameters.WorkerType = "External";
-    parameters.Network.ConnectionType = worker::NetworkConnectionType::kTcp;
+    parameters.Network.ConnectionType = worker::NetworkConnectionType::kKcp;
+    parameters.Network.Kcp.SecurityType = worker::NetworkSecurityType::kInsecure;
     parameters.Network.UseExternalIp = true;
 
     worker::LogsinkParameters logsink_params;
