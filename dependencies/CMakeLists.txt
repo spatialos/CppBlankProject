@@ -18,40 +18,18 @@ set(CPP_WORKER_SDK_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/worker_sdk/headers/i
 # Depends on threading libraries.
 find_package(Threads)
 
-# Debug libraries.
-find_library(LIB_IMPROBABLE_WORKER_DEBUG
-  NAMES improbable_worker
-  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
-  NO_DEFAULT_PATH)
-find_library(LIB_RAKNET_DEBUG
-  NAMES RakNetLibStatic
-  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
-  NO_DEFAULT_PATH)
-find_library(LIB_SSL_DEBUG
-  NAMES ssl
-  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
-  NO_DEFAULT_PATH)
-find_library(LIB_ZLIB_DEBUG
-  NAMES z zlibstatic
-  PATHS "${CPP_WORKER_SDK_DIR}/debug/lib" "${CPP_WORKER_SDK_DIR}/lib"
-  NO_DEFAULT_PATH)
-
 # Release libraries.
-find_library(LIB_IMPROBABLE_WORKER_RELEASE
+find_library(LIB_IMPROBABLE_WORKER
   NAMES improbable_worker
-  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  PATHS "${CPP_WORKER_SDK_DIR}/lib"
   NO_DEFAULT_PATH)
-find_library(LIB_RAKNET_RELEASE
-  NAMES RakNetLibStatic
-  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
-  NO_DEFAULT_PATH)
-find_library(LIB_SSL_RELEASE
+find_library(LIB_SSL
   NAMES ssl
-  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  PATHS "${CPP_WORKER_SDK_DIR}/lib"
   NO_DEFAULT_PATH)
-find_library(LIB_ZLIB_RELEASE
+find_library(LIB_ZLIB
   NAMES z zlibstatic
-  PATHS "${CPP_WORKER_SDK_DIR}/release/lib" "${CPP_WORKER_SDK_DIR}/lib"
+  PATHS "${CPP_WORKER_SDK_DIR}/lib"
   NO_DEFAULT_PATH)
 
 # Worker SDK library.
@@ -60,10 +38,9 @@ add_library(WorkerSdk INTERFACE)
 target_include_directories(WorkerSdk SYSTEM INTERFACE "${CPP_WORKER_SDK_INCLUDE_DIR}")
 
 target_link_libraries(WorkerSdk INTERFACE
-  debug ${LIB_IMPROBABLE_WORKER_DEBUG} optimized ${LIB_IMPROBABLE_WORKER_RELEASE}
-  debug ${LIB_RAKNET_DEBUG} optimized ${LIB_RAKNET_RELEASE}
-  debug ${LIB_ZLIB_DEBUG} optimized ${LIB_ZLIB_RELEASE}
-  debug ${LIB_SSL_DEBUG} optimized ${LIB_SSL_RELEASE}
+  ${LIB_IMPROBABLE_WORKER}
+  ${LIB_ZLIB}
+  ${LIB_SSL}
   # Must be at end!
   ${CMAKE_THREAD_LIBS_INIT}
   ${CMAKE_DL_LIBS})

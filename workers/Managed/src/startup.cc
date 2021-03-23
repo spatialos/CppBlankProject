@@ -71,8 +71,18 @@ int main(int argc, char** argv) {
 
     worker::ConnectionParameters parameters;
     parameters.WorkerType = "Managed";
-    parameters.Network.ConnectionType = worker::NetworkConnectionType::kTcp;
+    parameters.Network.ConnectionType = worker::NetworkConnectionType::kKcp;
+    parameters.Network.Kcp.SecurityType = worker::NetworkSecurityType::kInsecure;
     parameters.Network.UseExternalIp = false;
+
+    worker::LogsinkParameters logsink_params;
+    logsink_params.Type = worker::LogsinkType::kStdout;
+    logsink_params.FilterParameters.CustomFilter = [](worker::LogCategory categories, worker::LogLevel level) -> bool {
+        return level >= worker::LogLevel::kWarn ||
+            (level >= worker::LogLevel::kInfo && categories & worker::LogCategory::kLogin);
+    };
+    parameters.Logsinks.emplace_back(logsink_params);
+    parameters.EnableLoggingAtStartup = true;
 
     std::string workerId;
 
@@ -93,20 +103,17 @@ int main(int argc, char** argv) {
 
     // Register callbacks and run the worker main loop.
     worker::Dispatcher dispatcher{ ComponentRegistry{} };
-    bool is_connected = connection.IsConnected();
+    
+    if (connection.GetConnectionStatusCode() != worker::ConnectionStatusCode::kSuccess) {
+        std::cerr << "Failed to connect to the receptionist." << std::endl;
+        std::cerr << "Reason: " << connection.GetConnectionStatusDetailString() << std::endl;
+        return 1;
+    }
+    bool is_connected = true;
 
     dispatcher.OnDisconnect([&](const worker::DisconnectOp& op) {
         std::cerr << "[disconnect] " << op.Reason << std::endl;
         is_connected = false;
-    });
-
-    // Print log messages received from SpatialOS
-    dispatcher.OnLogMessage([&](const worker::LogMessageOp& op) {
-        if (op.Level == worker::LogLevel::kFatal) {
-            std::cerr << "Fatal error: " << op.Message << std::endl;
-            std::terminate();
-        }
-        std::cout << "[remote] " << op.Message << std::endl;
     });
 
     if (is_connected) {
