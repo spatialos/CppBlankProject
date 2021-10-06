@@ -1,0 +1,122 @@
+[1mdiff --git a/dependencies/CMakeLists.txt b/dependencies/CMakeLists.txt[m
+[1mindex bdc987e..935d375 100644[m
+[1m--- a/dependencies/CMakeLists.txt[m
+[1m+++ b/dependencies/CMakeLists.txt[m
+[36m@@ -10,17 +10,14 @@[m [mset(CPP_WORKER_SDK_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/worker_sdk/headers/i[m
+ # Depends on threading libraries.[m
+ find_package(Threads)[m
+ [m
+[31m-# Release libraries.[m
+[32m+[m[32m# On Windows this finds the import library (.lib) file, which contains information on how to link the .dll.[m
+ find_library(LIB_IMPROBABLE_WORKER[m
+   NAMES improbable_worker[m
+   PATHS "${CPP_WORKER_SDK_DIR}/lib"[m
+   NO_DEFAULT_PATH)[m
+[31m-find_library(LIB_SSL[m
+[31m-  NAMES ssl[m
+[31m-  PATHS "${CPP_WORKER_SDK_DIR}/lib"[m
+[31m-  NO_DEFAULT_PATH)[m
+[31m-find_library(LIB_ZLIB[m
+[31m-  NAMES z zlibstatic[m
+[32m+[m
+[32m+[m[32mfind_file(DLL_IMPROBABLE_WORKER[m
+[32m+[m[32m  NAMES improbable_worker.dll[m
+   PATHS "${CPP_WORKER_SDK_DIR}/lib"[m
+   NO_DEFAULT_PATH)[m
+ [m
+[36m@@ -31,8 +28,41 @@[m [mtarget_include_directories(WorkerSdk SYSTEM INTERFACE "${CPP_WORKER_SDK_INCLUDE_[m
+ [m
+ target_link_libraries(WorkerSdk INTERFACE[m
+   ${LIB_IMPROBABLE_WORKER}[m
+[31m-  ${LIB_ZLIB}[m
+[31m-  ${LIB_SSL}[m
+   # Must be at end![m
+   ${CMAKE_THREAD_LIBS_INIT}[m
+   ${CMAKE_DL_LIBS})[m
+[32m+[m
+[32m+[m[32mfunction(CREATE_WORKER_ZIP WORKER)[m
+[32m+[m[32m  # Set artifact subdirectories.[m
+[32m+[m[32m  set(WORKER_PACKAGE_COMMAND "spatial")[m
+[32m+[m[32m  # WORKER_BUILD_DIR should not be changed so that spatial local launch[m
+[32m+[m[32m  # and spatial upload can find the worker assemblies[m
+[32m+[m[32m  set(WORKER_BUILD_DIR "${APPLICATION_ROOT}/build/assembly/worker")[m
+[32m+[m
+[32m+[m[32m  if (MSVC)[m
+[32m+[m[32m    set(WORKER_RUNTIME_LIBRARY ${DLL_IMPROBABLE_WORKER})[m
+[32m+[m[32m  else()[m
+[32m+[m[32m    SET(WORKER_RUNTIME_LIBRARY ${LIB_IMPROBABLE_WORKER})[m
+[32m+[m[32m  endif()[m
+[32m+[m
+[32m+[m[32m  # Place the dynamic worker library next to the worker executable.[m
+[32m+[m[32m  add_custom_command(TARGET ${WORKER} POST_BUILD[m
+[32m+[m[32m      COMMAND ${CMAKE_COMMAND} -E copy_if_different[m
+[32m+[m[32m          ${WORKER_RUNTIME_LIBRARY}[m
+[32m+[m[32m          $<TARGET_FILE_DIR:${WORKER}>)[m
+[32m+[m
+[32m+[m[32m  # File name of the dynamic worker library.[m
+[32m+[m[32m  get_filename_component(WORKER_RUNTIME_LIBRARY_FILE_NAME ${WORKER_RUNTIME_LIBRARY} NAME)[m
+[32m+[m
+[32m+[m[32m  # Zip the executable and dynamic worker library.[m
+[32m+[m[32m  add_custom_target([m
+[32m+[m[32m    ${WORKER}Zip ALL[m
+[32m+[m[32m    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}[m
+[32m+[m[32m    COMMAND ${CMAKE_COMMAND} -E make_directory "${WORKER_BUILD_DIR}"[m
+[32m+[m[32m    COMMAND ${WORKER_PACKAGE_COMMAND} file zip -b "$<TARGET_FILE_DIR:${WORKER}>"[m
+[32m+[m[32m            -o "${WORKER_BUILD_DIR}/${WORKER}"[m
+[32m+[m[32m            --worker_platform=current[m
+[32m+[m[32m            "$<TARGET_FILE_NAME:${WORKER}>"[m
+[32m+[m[32m            ${WORKER_RUNTIME_LIBRARY_FILE_NAME}[m
+[32m+[m[32m    DEPENDS ${WORKER})[m
+[32m+[m[32mendfunction()[m
+\ No newline at end of file[m
+[1mdiff --git a/workers/External/CMakeLists.txt b/workers/External/CMakeLists.txt[m
+[1mindex 98068a2..bd58c09 100644[m
+[1m--- a/workers/External/CMakeLists.txt[m
+[1m+++ b/workers/External/CMakeLists.txt[m
+[36m@@ -36,18 +36,5 @@[m [mfile(GLOB_RECURSE SOURCE_FILES[m
+ add_executable(${PROJECT_NAME} ${SOURCE_FILES})[m
+ target_link_libraries(${PROJECT_NAME} WorkerSdk Schema)[m
+ [m
+[31m-# Set artifact subdirectories.[m
+[31m-# WORKER_ASSEMBLY_DIR should not be changed so that spatial local launch[m
+[31m-# and spatial upload can find the worker assemblies[m
+[31m-set(WORKER_ASSEMBLY_DIR "${APPLICATION_ROOT}/build/assembly/worker")[m
+[31m-[m
+[31m-# The worker in a zip.[m
+[31m-add_custom_target([m
+[31m-  ${PROJECT_NAME}Zip ALL[m
+[31m-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}[m
+[31m-  COMMAND ${CMAKE_COMMAND} -E make_directory "${WORKER_ASSEMBLY_DIR}"[m
+[31m-  COMMAND spatial file zip -b "$<TARGET_FILE_DIR:${PROJECT_NAME}>"[m
+[31m-          -o "${WORKER_ASSEMBLY_DIR}/${PROJECT_NAME}"[m
+[31m-          --worker_platform=current[m
+[31m-          "$<TARGET_FILE_NAME:${PROJECT_NAME}>"[m
+[31m-  DEPENDS ${PROJECT_NAME})[m
+[32m+[m[32m# Creates a zip file with the worker executable and the dynamic worker library.[m
+[32m+[m[32mcreate_worker_zip(${PROJECT_NAME})[m
+\ No newline at end of file[m
+[1mdiff --git a/workers/Managed/CMakeLists.txt b/workers/Managed/CMakeLists.txt[m
+[1mindex cb41434..f5c9845 100644[m
+[1m--- a/workers/Managed/CMakeLists.txt[m
+[1m+++ b/workers/Managed/CMakeLists.txt[m
+[36m@@ -36,18 +36,5 @@[m [mfile(GLOB_RECURSE SOURCE_FILES[m
+ add_executable(${PROJECT_NAME} ${SOURCE_FILES})[m
+ target_link_libraries(${PROJECT_NAME} WorkerSdk Schema)[m
+ [m
+[31m-# Set artifact subdirectories.[m
+[31m-# WORKER_ASSEMBLY_DIR should not be changed so that spatial local launch[m
+[31m-# and spatial upload can find the worker assemblies[m
+[31m-set(WORKER_ASSEMBLY_DIR "${APPLICATION_ROOT}/build/assembly/worker")[m
+[31m-[m
+[31m-# The worker in a zip.[m
+[31m-add_custom_target([m
+[31m-  ${PROJECT_NAME}Zip ALL[m
+[31m-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}[m
+[31m-  COMMAND ${CMAKE_COMMAND} -E make_directory "${WORKER_ASSEMBLY_DIR}"[m
+[31m-  COMMAND spatial file zip -b "$<TARGET_FILE_DIR:${PROJECT_NAME}>"[m
+[31m-          -o "${WORKER_ASSEMBLY_DIR}/${PROJECT_NAME}"[m
+[31m-          --worker_platform=current[m
+[31m-          "$<TARGET_FILE_NAME:${PROJECT_NAME}>"[m
+[31m-  DEPENDS ${PROJECT_NAME})[m
+[32m+[m[32m# Creates a zip file with the worker executable and the dynamic worker library.[m
+[32m+[m[32mcreate_worker_zip(${PROJECT_NAME})[m
