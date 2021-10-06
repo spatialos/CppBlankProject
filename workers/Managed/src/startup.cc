@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
     worker::ConnectionParameters parameters;
     parameters.WorkerType = "Managed";
     parameters.Network.ConnectionType = worker::NetworkConnectionType::kTcp;
-    parameters.Network.Kcp.SecurityType = worker::NetworkSecurityType::kInsecure;
+    parameters.Network.Tcp.SecurityType = worker::NetworkSecurityType::kInsecure;
     parameters.Network.UseExternalIp = false;
 
     worker::LogsinkParameters logsink_params;
