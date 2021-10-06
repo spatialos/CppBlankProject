@@ -133,18 +133,17 @@ int main(int argc, char** argv) {
         ? ConnectWithLocator(arguments[1], arguments[2], arguments[3], arguments[4], parameters)
         : ConnectWithReceptionist(arguments[1], atoi(arguments[2].c_str()), arguments[3], parameters);
 
+    if (connection.GetConnectionStatusCode() != worker::ConnectionStatusCode::kSuccess) {
+        std::cerr << "Worker connection failed: " << connection.GetConnectionStatusDetailString() << std::endl;
+        return 1;
+    }
+
     connection.SendLogMessage(worker::LogLevel::kInfo, kLoggerName, "Connected successfully");
 
     // Register callbacks and run the worker main loop.
     worker::Dispatcher dispatcher{ EmptyRegistry{} };
     
-    if (connection.GetConnectionStatusCode() != worker::ConnectionStatusCode::kSuccess) {
-        std::cerr << "Failed to connect to the receptionist." << std::endl;
-        std::cerr << "Reason: " << connection.GetConnectionStatusDetailString() << std::endl;
-        return 1;
-    }
     bool is_connected = true;
-
     dispatcher.OnDisconnect([&](const worker::DisconnectOp& op) {
         std::cerr << "[disconnect] " << op.Reason << std::endl;
         is_connected = false;
