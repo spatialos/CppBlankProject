@@ -3,15 +3,7 @@
 
 # This is defined in spatialos_worker_packages.json (usually in the directory of each project
 # that requires the SDK)
-if(WIN32)
-  set(CPP_WORKER_SDK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/worker_sdk/win32")
-elseif(UNIX)
-  if(APPLE)
-    set(CPP_WORKER_SDK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/worker_sdk/macos")
-  else()
-    set(CPP_WORKER_SDK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/worker_sdk/linux")
-  endif()
-endif()
+set(CPP_WORKER_SDK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/worker_sdk")
 
 set(CPP_WORKER_SDK_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/worker_sdk/headers/include")
 

@@ -10,31 +10,20 @@
       ]
     },
     {
-      "path": "../../dependencies/worker_sdk/win32/lib",
+      "path": "../../dependencies/worker_sdk/lib",
       "type": "worker_sdk",
       "packages": [
         {
-          "name": "c-static-x86_64-vc141_md-win32",
-          "platform": "windows"
-        }
-      ]
-    },
-    {
-      "path": "../../dependencies/worker_sdk/macos/lib",
-      "type": "worker_sdk",
-      "packages": [
-        {
-          "name": "c-static-x86_64-clang-macos",
+          "name": "c-dynamic-x86_64-clang-macos",
           "platform": "macos"
-        }
-      ]
-    },
-    {
-      "path": "../../dependencies/worker_sdk/linux/lib",
-      "type": "worker_sdk",
-      "packages": [
+        },
         {
-          "name": "c-static-x86_64-clang1000_pic-linux"
+          "name": "c-dynamic-x86_64-clang1000-linux",
+          "platform": "linux"
+        },
+        {
+          "name": "c-dynamic-x86_64-vc141_md-win32",
+          "platform": "windows"
         }
       ]
     }
