@@ -149,7 +149,7 @@ int main(int argc, char** argv)
 
     double elapsed_time = 0.0;
     const double tick_time = 0.016; // 16 ms, ~60 frames per second
-    
+
     while (is_connected) {
         view.Process(connection.GetOpList(kGetOpListTimeoutInMilliseconds));
 
