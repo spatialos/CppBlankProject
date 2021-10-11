@@ -1,5 +1,0 @@
-package sample;
-
-component Blank {
-  id = 1001;
-}

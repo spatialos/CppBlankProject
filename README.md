@@ -85,10 +85,13 @@ show how sources generated from the schema could be linked in the worker
 binary. See `schema/CMakeLists.txt` which creates a library with all generated
 sources.
 
-You can see (and edit) the content of the snapshot in text format by running a command to convert it:
+The snapshot exists in both JSON and binary format in the `snapshots` folder. There is no script
+to generate the snapshot as the snapshot was written by hand in JSON format, but it's possible
+to make simple changes to the JSON snapshot and regenerate the binary snapshot from it. To update the
+binary snapshot after making a change, run the following command:
 
 ```
-spatial project history snapshot convert --input=<path> --input-format=binary --output=<path> --output-format=text
+spatial project history snapshot convert --input-format=text --input=snapshots/default.json --output-format=binary --output=snapshots/default.snapshot
 ```
 
 ### The worker project

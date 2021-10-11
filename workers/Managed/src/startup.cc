@@ -1,18 +1,27 @@
 #include <algorithm>
 #include <chrono>
 #include <cstdlib>
-#include <improbable/worker.h>
-#include <improbable/standard_library.h>
 #include <iostream>
 
-// Use this to make a worker::ComponentRegistry.
-// For example use worker::Components<improbable::Position, improbable::Metadata> to track these common components
-using ComponentRegistry = worker::Components<improbable::Position, improbable::Metadata>;
+#include <improbable/view.h>
+#include <improbable/worker.h>
+
+#include <improbable/restricted/system_components.h>
+#include <improbable/standard_library.h>
+#include <sample.h>
+#include <thread>
+
+// This keeps track of all components and component sets that this worker uses.
+// Used to make a worker::ComponentRegistry.
+using ComponentRegistry = worker::Schema<sample::LoginListenerSet, sample::PositionSet, improbable::Position, improbable::Metadata, improbable::restricted::Worker, improbable::restricted::Partition>;
 
 // Constants and parameters
 const int ErrorExitStatus = 1;
 const std::string kLoggerName = "startup.cc";
 const std::uint32_t kGetOpListTimeoutInMilliseconds = 100;
+
+const worker::EntityId listenerEntity = 1;
+const worker::EntityId serverPartitionId = 2;
 
 worker::Connection ConnectWithReceptionist(const std::string hostname,
                                            const std::uint16_t port,
@@ -37,7 +46,8 @@ std::string get_random_characters(size_t count) {
 }
 
 // Entry point
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
     auto now = std::chrono::high_resolution_clock::now();
     std::srand(std::chrono::time_point_cast<std::chrono::nanoseconds>(now).time_since_epoch().count());
 
@@ -106,21 +116,52 @@ int main(int argc, char** argv) {
 
     connection.SendLogMessage(worker::LogLevel::kInfo, kLoggerName, "Connected successfully");
 
-    // Register callbacks and run the worker main loop.
-    worker::Dispatcher dispatcher{ ComponentRegistry{} };
+    worker::View view{ComponentRegistry{}};
 
     bool is_connected = true;
-    dispatcher.OnDisconnect([&](const worker::DisconnectOp& op) {
+    view.OnDisconnect([&](const worker::DisconnectOp& op) {
         std::cerr << "[disconnect] " << op.Reason << std::endl;
         is_connected = false;
     });
 
-    if (is_connected) {
-        std::cout << "[local] Connected successfully to SpatialOS, listening to ops... " << std::endl;
-    }
+    using AssignPartitionCommand = improbable::restricted::Worker::Commands::AssignPartition;
 
+    // In real code, we would probably want to retry here.
+    view.OnCommandResponse<AssignPartitionCommand>(
+        [&](const worker::CommandResponseOp<AssignPartitionCommand>& op) {
+            if (op.StatusCode == worker::StatusCode::kSuccess) {
+                connection.SendLogMessage(worker::LogLevel::kInfo, "Server",
+                                    "Successfully assigned partition.");
+            } else {
+                connection.SendLogMessage(worker::LogLevel::kError, "Server",
+                                    "Failed to assign partition: error code : " +
+                                        std::to_string(static_cast<std::uint8_t>(op.StatusCode)) +
+                                        " message: " + op.Message);
+            }
+        });
+
+    connection.SendCommandRequest<AssignPartitionCommand>(connection.GetWorkerEntityId(), {serverPartitionId}, /* default timeout */ {});
+
+    view.OnAddComponent<improbable::restricted::Worker>([&](worker::AddComponentOp<improbable::restricted::Worker> op)
+    {
+        connection.SendLogMessage(worker::LogLevel::kInfo, "Server", "Worker with ID " + std::to_string(op.EntityId) + " connected.");
+    });
+
+    double elapsed_time = 0.0;
+    const double tick_time = 0.016; // 16 ms, ~60 frames per second
+    
     while (is_connected) {
-        dispatcher.Process(connection.GetOpList(kGetOpListTimeoutInMilliseconds));
+        view.Process(connection.GetOpList(kGetOpListTimeoutInMilliseconds));
+
+        elapsed_time += tick_time;
+
+        if (view.GetAuthority<sample::LoginListenerSet>(listenerEntity) == worker::Authority::kAuthoritative) {
+            improbable::Position::Update pos_update;
+            pos_update.set_coords({std::sin(elapsed_time), 0.0, std::cos(elapsed_time)});
+            connection.SendComponentUpdate<improbable::Position>(listenerEntity, pos_update);
+        }
+
+        std::this_thread::sleep_for(std::chrono::duration<double>(tick_time));
     }
 
     return ErrorExitStatus;
