@@ -35,7 +35,8 @@ spatial local launch --runtime_version=14.5.4
 
 > **Windows users**
 >
-> It is strongly recommended that you invoke `spatial worker build` directly from a bash terminal, e.g. git bash. The command executes shell scripts internally, which are likely to fail when invoked from other types of terminals.
+> It is strongly recommended that you invoke `spatial worker build` directly from a bash shell, e.g. git bash. The command executes shell scripts internally, which are likely to fail when invoked from other types of shells (e.g. cmder).
+> Likely issues when not using a bash shell are the `$'\r': command not found` error, or the `cmake` command not being found.
 
 To connect a new instance of the "External" worker type to a running local deployment (after `spatial local launch`):
 
