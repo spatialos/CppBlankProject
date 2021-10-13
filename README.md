@@ -35,8 +35,8 @@ spatial local launch --runtime_version=14.5.4
 
 > **Windows users**
 >
-> It is strongly recommended that you invoke `spatial worker build` directly from a bash shell, e.g. git bash. The command executes shell scripts internally, which are likely to fail when invoked from other types of shells (e.g. cmder).
-> Likely issues when not using a bash shell are the `$'\r': command not found` error, or the `cmake` command not being found.
+> If you have [WSL](https://docs.microsoft.com/en-us/windows/wsl/about) installed, it is strongly recommended that you invoke `spatial worker build` directly from a non-WSL bash shell, e.g. git bash. The command executes shell scripts internally, which are likely to fail when invoked from other types of shells (e.g. cmder, powershell).
+> Try this if you see the `$'\r': command not found` error, or the `cmake` command not getting found despite being installed.
 
 To connect a new instance of the "External" worker type to a running local deployment (after `spatial local launch`):
 
