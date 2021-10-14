@@ -148,12 +148,10 @@ int main(int argc, char** argv)
     });
 
     double elapsed_time = 0.0;
-    const double tick_time = 0.016; // 16 ms, ~60 frames per second
+    auto last_tick_time = std::chrono::steady_clock::now();
 
     while (is_connected) {
         view.Process(connection.GetOpList(kGetOpListTimeoutInMilliseconds));
-
-        elapsed_time += tick_time;
 
         if (view.GetAuthority<sample::LoginListenerSet>(listenerEntity) == worker::Authority::kAuthoritative) {
             improbable::Position::Update pos_update;
@@ -161,7 +159,9 @@ int main(int argc, char** argv)
             connection.SendComponentUpdate<improbable::Position>(listenerEntity, pos_update);
         }
 
-        std::this_thread::sleep_for(std::chrono::duration<double>(tick_time));
+        auto now = std::chrono::steady_clock::now();
+        elapsed_time += std::chrono::duration<double>(now - last_tick_time).count(); // Amount of time since last tick, in seconds
+        last_tick_time = now;
     }
 
     return ErrorExitStatus;
