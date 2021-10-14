@@ -13,7 +13,7 @@
 
 // This keeps track of all components and component sets that this worker uses.
 // Used to make a worker::ComponentRegistry.
-using ComponentRegistry = worker::Schema<sample::LoginListenerSet, sample::PositionSet, improbable::Position, improbable::restricted::Worker, improbable::restricted::Partition>;
+using ComponentRegistry = worker::Schema<sample::LoginListenerSet, improbable::restricted::Worker, improbable::restricted::Partition>;
 
 // Constants and parameters
 const int ErrorExitStatus = 1;
@@ -152,16 +152,6 @@ int main(int argc, char** argv)
 
     while (is_connected) {
         view.Process(connection.GetOpList(kGetOpListTimeoutInMilliseconds));
-
-        if (view.GetAuthority<sample::LoginListenerSet>(listenerEntity) == worker::Authority::kAuthoritative) {
-            improbable::Position::Update pos_update;
-            pos_update.set_coords({std::sin(elapsed_time), 0.0, std::cos(elapsed_time)});
-            connection.SendComponentUpdate<improbable::Position>(listenerEntity, pos_update);
-        }
-
-        auto now = std::chrono::steady_clock::now();
-        elapsed_time += std::chrono::duration<double>(now - last_tick_time).count(); // Amount of time since last tick, in seconds
-        last_tick_time = now;
     }
 
     return ErrorExitStatus;

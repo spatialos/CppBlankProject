@@ -10,8 +10,3 @@ component_set LoginListenerSet {
   id = 2000;
   components = [LoginListener];
 }
-
-component_set PositionSet {
-  id = 2001;
-  components = [improbable.Position];
-}
