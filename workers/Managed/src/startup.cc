@@ -13,7 +13,7 @@
 
 // This keeps track of all components and component sets that this worker uses.
 // Used to make a worker::ComponentRegistry.
-using ComponentRegistry = worker::Schema<sample::LoginListenerSet, sample::PositionSet, improbable::Position, improbable::Metadata, improbable::restricted::Worker, improbable::restricted::Partition>;
+using ComponentRegistry = worker::Schema<sample::LoginListenerSet, sample::PositionSet, improbable::Position, improbable::restricted::Worker, improbable::restricted::Partition>;
 
 // Constants and parameters
 const int ErrorExitStatus = 1;
@@ -144,7 +144,7 @@ int main(int argc, char** argv)
 
     view.OnAddComponent<improbable::restricted::Worker>([&](worker::AddComponentOp<improbable::restricted::Worker> op)
     {
-        connection.SendLogMessage(worker::LogLevel::kInfo, "Server", "Worker with ID " + std::to_string(op.EntityId) + " connected.");
+        connection.SendLogMessage(worker::LogLevel::kInfo, "Server", "Worker with ID " + op.Data.worker_id() + " connected.");
     });
 
     double elapsed_time = 0.0;
