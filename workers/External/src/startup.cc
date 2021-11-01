@@ -16,28 +16,22 @@ const std::uint32_t kGetOpListTimeoutInMilliseconds = 100;
 
 // Connection helpers
 worker::Connection ConnectWithLocator(const std::string hostname,
-    const std::string project_name,
-    const std::string deployment_id,
     const std::string login_token,
     const worker::ConnectionParameters& connection_parameters) {
+    worker::LogsinkParameters logsink_params;
+    logsink_params.Type = worker::LogsinkType::kStdout;
+    logsink_params.FilterParameters.CustomFilter = [](worker::LogCategory categories, worker::LogLevel level) -> bool {
+        return level >= worker::LogLevel::kWarn ||
+            (level >= worker::LogLevel::kInfo && categories & worker::LogCategory::kLogin);
+    };
     worker::LocatorParameters locator_parameters;
-    locator_parameters.ProjectName = project_name;
-    locator_parameters.CredentialsType = worker::LocatorCredentialsType::kLoginToken;
-    locator_parameters.LoginToken.Token = login_token;
+    locator_parameters.Logsinks.emplace_back(logsink_params);
+    locator_parameters.PlayerIdentity.LoginToken = login_token;
+    locator_parameters.UseInsecureConnection = true;
 
     worker::Locator locator{ hostname, locator_parameters };
 
-    auto queue_status_callback = [&](const worker::QueueStatus& queue_status) {
-        if (!queue_status.Error.empty()) {
-            std::cerr << "Error while queueing: " << *queue_status.Error << std::endl;
-            return false;
-        }
-        std::cout << "Worker of type '" << connection_parameters.WorkerType
-            << "' connecting through locator: queueing." << std::endl;
-        return true;
-    };
-
-    auto future = locator.ConnectAsync(EmptyRegistry{}, deployment_id, connection_parameters, queue_status_callback);
+    auto future = locator.ConnectAsync(EmptyRegistry{}, connection_parameters);
     return future.Get();
 }
 
@@ -71,7 +65,7 @@ int main(int argc, char** argv) {
 
     auto print_usage = [&]() {
         std::cout << "Usage: External receptionist <hostname> <port> <worker_id>" << std::endl;
-        std::cout << "       External locator <hostname> <project_name> <deployment_id> <login_token>";
+        std::cout << "       External locator <hostname> <login_token>";
         std::cout << std::endl;
         std::cout << "Connects to SpatialOS" << std::endl;
         std::cout << "    <hostname>       - hostname of the receptionist or locator to connect to.";
@@ -79,16 +73,24 @@ int main(int argc, char** argv) {
         std::cout << "    <port>           - port to use if connecting through the receptionist.";
         std::cout << std::endl;
         std::cout << "    <worker_id>      - name of the worker assigned by SpatialOS." << std::endl;
-        std::cout << "    <project_name>   - name of the project to run." << std::endl;
-        std::cout << "    <deployment_id>  - name of the cloud deployment to run." << std::endl;
         std::cout << "    <login_token>   - token to use when connecting through the locator.";
         std::cout << std::endl;
     };
 
     worker::ConnectionParameters parameters;
     parameters.WorkerType = "External";
-    parameters.Network.ConnectionType = worker::NetworkConnectionType::kTcp;
+    parameters.Network.ConnectionType = worker::NetworkConnectionType::kKcp;
+    parameters.Network.Kcp.SecurityType = worker::NetworkSecurityType::kInsecure;
     parameters.Network.UseExternalIp = true;
+
+    worker::LogsinkParameters logsink_params;
+    logsink_params.Type = worker::LogsinkType::kStdout;
+    logsink_params.FilterParameters.CustomFilter = [](worker::LogCategory categories, worker::LogLevel level) -> bool {
+        return level >= worker::LogLevel::kWarn ||
+            (level >= worker::LogLevel::kInfo && categories & worker::LogCategory::kLogin);
+    };
+    parameters.Logsinks.emplace_back(logsink_params);
+    parameters.EnableLoggingAtStartup = true;
 
     std::vector<std::string> arguments;
 
@@ -114,27 +116,23 @@ int main(int argc, char** argv) {
 
     // Connect with locator or receptionist
     worker::Connection connection = use_locator
-        ? ConnectWithLocator(arguments[1], arguments[2], arguments[3], arguments[4], parameters)
+        ? ConnectWithLocator(arguments[1], arguments[2], parameters)
         : ConnectWithReceptionist(arguments[1], atoi(arguments[2].c_str()), arguments[3], parameters);
+
+    if (connection.GetConnectionStatusCode() != worker::ConnectionStatusCode::kSuccess) {
+        std::cerr << "Worker connection failed: " << connection.GetConnectionStatusDetailString() << std::endl;
+        return 1;
+    }
 
     connection.SendLogMessage(worker::LogLevel::kInfo, kLoggerName, "Connected successfully");
 
     // Register callbacks and run the worker main loop.
     worker::Dispatcher dispatcher{ EmptyRegistry{} };
-    bool is_connected = connection.IsConnected();
-
+    
+    bool is_connected = true;
     dispatcher.OnDisconnect([&](const worker::DisconnectOp& op) {
         std::cerr << "[disconnect] " << op.Reason << std::endl;
         is_connected = false;
-    });
-
-    // Print messages received from SpatialOS
-    dispatcher.OnLogMessage([&](const worker::LogMessageOp& op) {
-        if (op.Level == worker::LogLevel::kFatal) {
-            std::cerr << "Fatal error: " << op.Message << std::endl;
-            std::terminate();
-        }
-        std::cout << "Connection: " << op.Message << std::endl;
     });
 
     while (is_connected) {

@@ -1,7 +1,6 @@
 {
   "template": "w2_r0500_e5",
   "world": {
-    "chunk_edge_length_meters": 50,
     "snapshots": {
       "snapshot_write_period_seconds": 0
     },
@@ -13,7 +12,7 @@
   "load_balancing": {
     "layer_configurations": [
       {
-        "layer": "simulation",
+        "layer": "Managed",
         "rectangle_grid": {
           "cols": 1,
           "rows": 1
@@ -34,6 +33,9 @@
         "entity_query": {
           "allow": true,
           "components": ["*"]
+        },
+        "system_entity_command": {
+          "allow": true
         }
       }]
     },

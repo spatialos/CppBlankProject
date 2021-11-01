@@ -36,18 +36,5 @@ file(GLOB_RECURSE SOURCE_FILES
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} WorkerSdk Schema)
 
-# Set artifact subdirectories.
-# WORKER_ASSEMBLY_DIR should not be changed so that spatial local launch
-# and spatial upload can find the worker assemblies
-set(WORKER_ASSEMBLY_DIR "${APPLICATION_ROOT}/build/assembly/worker")
-
-# The worker in a zip.
-add_custom_target(
-  ${PROJECT_NAME}Zip ALL
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-  COMMAND ${CMAKE_COMMAND} -E make_directory "${WORKER_ASSEMBLY_DIR}"
-  COMMAND spatial file zip -b "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
-          -o "${WORKER_ASSEMBLY_DIR}/${PROJECT_NAME}"
-          --worker_platform=current
-          "$<TARGET_FILE_NAME:${PROJECT_NAME}>"
-  DEPENDS ${PROJECT_NAME})
+# Creates a zip file with the worker executable and the dynamic worker library.
+create_worker_zip(${PROJECT_NAME})

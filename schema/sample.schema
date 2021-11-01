@@ -1,0 +1,17 @@
+package sample;
+
+import "improbable/standard_library.schema";
+
+component LoginListener {
+  id = 1000;
+}
+
+component_set LoginListenerSet {
+  id = 2000;
+  components = [LoginListener];
+}
+
+component_set PositionSet {
+  id = 2001;
+  components = [improbable.Position];
+}

@@ -30,7 +30,7 @@ To build and launch a local deployment execute the following commands:
 
 ```
 spatial worker build
-spatial local launch --runtime_version=14.5.4
+spatial local launch --runtime_version=15.0.0
 ```
 
 > **Windows users**
@@ -46,20 +46,17 @@ spatial local worker launch External local
 
 ## What the project does
 
-It's a blank project so the short answer is - not much. The snapshot file in
-this project contains a single entity with an ACL which matches the `Managed`
-worker attributes. When you launch a deployment, a single instance of the
-`Managed` worker will be started as configured in `default_launch.json`.
+When you launch a deployment, a single instance of the `Managed` worker will be started as configured in `default_launch.json`.
 
-After connecting successfully both the `Managed` and `External` workers log a
-message to SpatialOS which should be displayed in the output of `spatial local
-launch` as it's running. Then they just spin in a loop processing the Ops list.
+The `Managed` worker connects to SpatialOS and then assigns the entity with ID 2 (defined in the snapshot) as a partition entity to itself.
+This then gives it authority over the `LoginListenerSet` and `PositionSet` on entity 1, as per the authority delegation already set up on it in the snapshot.
 
-When SpatialOS disconnects a worker, a message is written to the console output
-of the worker and it exits with an error status.
+The `Managed` worker updates the position of entity 1 in a loop, making it move around the origin in a circle - this will be visible from the inspector.
 
-Instances of the `External` worker won't have any entities added to their view
-because they don't have write access to anything in the snapshot.
+The `Interest` component on entity 1 is configured such that the `Managed` worker gains interest in all other entity with the `improbable::restricted::Worker` component.
+The `Managed` worker uses this detect when new workers connect to the deployment and log a message to the runtime for each connected worker.
+
+The `External` worker, once manually started, simply connects to SpatialOS and then loops to continually process the Ops list it receives.
 
 ## Project structure
 
@@ -90,10 +87,13 @@ show how sources generated from the schema could be linked in the worker
 binary. See `schema/CMakeLists.txt` which creates a library with all generated
 sources.
 
-You can see (and edit) the content of the snapshot in text format by running a command to convert it:
+The snapshot exists in both JSON and binary format in the `snapshots` folder. There is no script
+to generate the snapshot as the snapshot was written by hand in JSON format, but it's possible
+to make simple changes to the JSON snapshot and regenerate the binary snapshot from it. To update the
+binary snapshot after making a change, run the following command:
 
 ```
-spatial project history snapshot convert --input=<path> --input-format=binary --output=<path> --output-format=text
+spatial project history snapshot convert --input-format=text --input=snapshots/default.json --output-format=binary --output=snapshots/default.snapshot
 ```
 
 ### The worker project
@@ -132,7 +132,7 @@ Once this is done and you have successfully built a Linux assembly, set the `pro
 
 ```
 spatial cloud upload <assembly-name>
-spatial cloud launch <assembly-name> default_launch.json <deployment-name> --snapshot=<snapshot-path> --runtime_version=14.5.4
+spatial cloud launch <assembly-name> default_launch.json <deployment-name> --snapshot=<snapshot-path> --runtime_version=15.0.0
 ```
 
 See [`spatial cloud connect external`](https://docs.improbable.io/reference/latest/shared/spatial-cli/spatial-cloud-connect-external)
