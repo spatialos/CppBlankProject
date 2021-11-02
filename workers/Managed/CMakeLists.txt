@@ -7,6 +7,7 @@ project(Managed)
 cmake_minimum_required(VERSION 3.7)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_BUILD_RPATH "$ORIGIN")
 
 set(APPLICATION_ROOT "${PROJECT_SOURCE_DIR}/../..")
 set(SCHEMA_SOURCE_DIR "${APPLICATION_ROOT}/schema")
